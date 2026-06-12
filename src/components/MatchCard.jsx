@@ -2,19 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import { translateTeamName } from '../lib/teamNames'
 import { getFlagForTeam } from '../lib/flags'
 import { getPredictionTypeIcon, getPredictionSummary } from '../lib/scoring'
-
-function formatDate(dateStr) {
-  const d = new Date(dateStr)
-  return d.toLocaleDateString('ru-RU', {
-    day: 'numeric',
-    month: 'short',
-  })
-}
-
-function formatTime(dateStr) {
-  const d = new Date(dateStr)
-  return d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })
-}
+import { formatDateShort, formatTime } from '../lib/formatters'
 
 function statusLabel(status) {
   switch (status) {
@@ -45,7 +33,7 @@ export default function MatchCard({ match, userPrediction }) {
     <div className={`match-card card${isFinished ? ' finished' : ''}`} onClick={() => navigate(`/match/${match.id}`)}>
       <div className="match-header">
         <div className="match-header-left">
-          <span className="match-date">{formatDate(match.match_date)} {formatTime(match.match_date)}</span>
+          <span className="match-date">{formatDateShort(match.match_date)} {formatTime(match.match_date)}</span>
           {userPrediction ? (
             <>
               <span className="prediction-indicator">

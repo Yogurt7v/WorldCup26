@@ -5,22 +5,9 @@ import { useMatch } from '../hooks/useMatches'
 import { useAuth } from '../hooks/useAuth'
 import { translateTeamName } from '../lib/teamNames'
 import { getFlagForTeam } from '../lib/flags'
+import { formatDateLong, formatTime } from '../lib/formatters'
 import PredictionForm from '../components/PredictionForm'
 import PredictionsList from '../components/PredictionsList'
-
-function formatDate(dateStr) {
-  const d = new Date(dateStr)
-  return d.toLocaleDateString('ru-RU', {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-  })
-}
-
-function formatTime(dateStr) {
-  const d = new Date(dateStr)
-  return d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })
-}
 
 export default function MatchDetails() {
   const { id } = useParams()
@@ -68,7 +55,7 @@ export default function MatchDetails() {
 
       <div className="match-hero card">
         <div className="match-header" style={{ justifyContent: 'center', marginBottom: '0.5rem' }}>
-          <span>{formatDate(match.match_date)}, {formatTime(match.match_date)}</span>
+          <span>{formatDateLong(match.match_date)}, {formatTime(match.match_date)}</span>
         </div>
         <div className="teams">
           <div className="team-name home">{getFlagForTeam(match.home_team)} {translateTeamName(match.home_team)}</div>
