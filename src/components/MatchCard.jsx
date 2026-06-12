@@ -42,7 +42,7 @@ export default function MatchCard({ match, userPrediction }) {
     : '- : -'
 
   return (
-    <div className="match-card card" onClick={() => navigate(`/match/${match.id}`)}>
+    <div className={`match-card card${isFinished ? ' finished' : ''}`} onClick={() => navigate(`/match/${match.id}`)}>
       <div className="match-header">
         <div className="match-header-left">
           <span className="match-date">{formatDate(match.match_date)} {formatTime(match.match_date)}</span>
