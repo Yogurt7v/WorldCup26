@@ -697,6 +697,16 @@ a:hover {
   width: 100%;
 }
 
+.form-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.form-actions .btn {
+  flex: 1;
+}
+
 .predictions-list {
   display: flex;
   flex-direction: column;

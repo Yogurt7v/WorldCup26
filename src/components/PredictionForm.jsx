@@ -13,6 +13,7 @@ export default function PredictionForm({ match, existingPrediction, onSaved }) {
   const [goalsTeam, setGoalsTeam] = useState('')
   const [goalsThreshold, setGoalsThreshold] = useState('')
   const [saving, setSaving] = useState(false)
+  const [deleting, setDeleting] = useState(false)
   const [error, setError] = useState('')
   const [saved, setSaved] = useState(false)
 
@@ -64,6 +65,34 @@ export default function PredictionForm({ match, existingPrediction, onSaved }) {
 
   function handleOutcomeClick(outcome) {
     setSelectedOutcome(selectedOutcome === outcome ? null : outcome)
+  }
+
+  const handleDelete = async () => {
+    if (!existingPrediction) return
+    setDeleting(true)
+    setError('')
+    try {
+      const { error: delError } = await supabase
+        .from('predictions')
+        .delete()
+        .eq('user_id', user.id)
+        .eq('match_id', match.id)
+
+      if (delError) {
+        setError(delError.message || 'Ошибка при удалении прогноза')
+        return
+      }
+
+      setHomeScore('')
+      setAwayScore('')
+      setSelectedOutcome(null)
+      setGoalsTeam('')
+      setGoalsThreshold('')
+
+      if (onSaved) onSaved()
+    } finally {
+      setDeleting(false)
+    }
   }
 
   const handleSubmit = async (e) => {
@@ -257,13 +286,26 @@ export default function PredictionForm({ match, existingPrediction, onSaved }) {
       {error && <div className="form-error">{error}</div>}
       {saved && <div className="form-success">Прогноз сохранён!</div>}
 
-      <button
-        type="submit"
-        className="btn btn-primary btn-full"
-        disabled={isLocked || saving}
-      >
-        {saving ? 'Сохранение...' : existingPrediction ? 'Обновить прогноз' : 'Сохранить прогноз'}
-      </button>
+      <div className="form-actions">
+        <button
+          type="submit"
+          className="btn btn-primary"
+          disabled={isLocked || saving}
+        >
+          {saving ? 'Сохранение...' : existingPrediction ? 'Обновить прогноз' : 'Сохранить прогноз'}
+        </button>
+
+        {existingPrediction && !isLocked && (
+          <button
+            type="button"
+            className="btn btn-outline"
+            onClick={handleDelete}
+            disabled={deleting}
+          >
+            {deleting ? 'Удаление...' : 'Удалить прогноз'}
+          </button>
+        )}
+      </div>
     </form>
   )
 }
