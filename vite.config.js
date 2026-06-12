@@ -3,6 +3,15 @@ import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig(({ mode }) => ({
+  server: {
+    proxy: {
+      '/api/supabase': {
+        target: 'https://whobwjaymbhychlbgfom.supabase.co',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/supabase/, ''),
+      },
+    },
+  },
   plugins: [
     react(),
     VitePWA({

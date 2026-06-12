@@ -1,11 +1,14 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY env variables')
+if (!supabaseAnonKey) {
+  throw new Error('Missing VITE_SUPABASE_ANON_KEY env variable')
 }
+
+const supabaseUrl = import.meta.env.PROD
+  ? '/api/supabase'
+  : import.meta.env.VITE_SUPABASE_URL
 
 function createTimeoutFetch(timeoutMs = 30000) {
   return (url, options = {}) => {
@@ -22,5 +25,8 @@ function createTimeoutFetch(timeoutMs = 30000) {
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   global: {
     fetch: createTimeoutFetch(30000),
+  },
+  realtime: {
+    url: 'wss://whobwjaymbhychlbgfom.supabase.co/realtime/v1',
   },
 })
