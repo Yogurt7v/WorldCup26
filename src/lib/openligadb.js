@@ -5,7 +5,9 @@ const API_BASE = 'https://worldcup26.ir'
 function parseMatchDate(dateStr) {
   const [date, time] = dateStr.split(' ')
   const [month, day, year] = date.split('/')
-  return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}T${time}:00`
+  const [hh, mm] = time.split(':').map(Number)
+  const utc = Date.UTC(+year, +month - 1, +day, hh, mm) - 3.5 * 3600000
+  return new Date(utc).toISOString()
 }
 
 function mapStatus(match) {
