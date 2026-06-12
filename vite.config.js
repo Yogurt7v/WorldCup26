@@ -2,19 +2,19 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      selfDestroying: true,
+      selfDestroying: mode === 'development',
       includeAssets: ['favicon.svg'],
       manifest: {
         name: 'ЧМ-2026 — Прогнозы на матчи',
         short_name: 'ЧМ-2026 Прогнозы',
         description: 'Приложение для прогнозов на матчи чемпионата мира по футболу 2026',
-        theme_color: '#0f172a',
-        background_color: '#0f172a',
+        theme_color: '#f8fafc',
+        background_color: '#ffffff',
         display: 'standalone',
         orientation: 'portrait',
         lang: 'ru',
@@ -43,4 +43,4 @@ export default defineConfig({
       },
     }),
   ],
-})
+}))
