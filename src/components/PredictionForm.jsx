@@ -91,8 +91,8 @@ export default function PredictionForm({ match, existingPrediction, onSaved }) {
 
     if (hasGoals) {
       const t = parseInt(goalsThreshold, 10)
-      if (isNaN(t) || t < 0) {
-        setError('Введите корректное число голов (0 и больше)')
+      if (isNaN(t) || t < 2) {
+        setError('Введите корректное число голов (минимум 2)')
         return
       }
     }
@@ -236,12 +236,12 @@ export default function PredictionForm({ match, existingPrediction, onSaved }) {
           <span className="goals-label">забьёт не менее</span>
           <input
             type="number"
-            min="0"
+            min="2"
             max="99"
             value={goalsThreshold}
             onChange={(e) => setGoalsThreshold(e.target.value)}
             disabled={isLocked}
-            placeholder="0"
+            placeholder="2"
             className="goals-input"
           />
           <span className="goals-label">гол(ов)</span>
