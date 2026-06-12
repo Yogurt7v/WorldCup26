@@ -7,7 +7,7 @@ if (!supabaseAnonKey) {
 }
 
 const supabaseUrl = import.meta.env.PROD
-  ? '/api/supabase'
+  ? window.location.origin + '/api/supabase'
   : import.meta.env.VITE_SUPABASE_URL
 
 function createTimeoutFetch(timeoutMs = 30000) {
