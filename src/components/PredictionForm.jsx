@@ -120,7 +120,7 @@ export default function PredictionForm({ match, existingPrediction, onSaved }) {
       )
 
       if (upsertError) {
-        setError('Ошибка при сохранении прогноза')
+        setError(upsertError.message || 'Ошибка при сохранении прогноза')
         return
       }
 
