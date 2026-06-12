@@ -306,7 +306,11 @@ a:hover {
 }
 
 .match-card.finished {
-  opacity: 0.65;
+  opacity: 0.35;
+}
+
+.match-card:not(.finished) {
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06), 0 2px 16px rgba(0, 0, 0, 0.08);
 }
 
 .match-card .match-header {
