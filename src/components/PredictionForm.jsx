@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../hooks/useAuth'
 import { translateTeamName } from '../lib/teamNames'
 import { getFlagForTeam } from '../lib/flags'
-import { getPredictionTypeIcon, getPredictionSummary } from '../lib/scoring'
+import { POINTS_EXACT_SCORE, POINTS_OUTCOME, POINTS_GOALS_THRESHOLD, getPredictionTypeIcon, getPredictionSummary } from '../lib/scoring'
 
 export default function PredictionForm({ match, existingPrediction, onSaved }) {
   const { user } = useAuth()
@@ -162,7 +162,7 @@ export default function PredictionForm({ match, existingPrediction, onSaved }) {
 
       {/* ИСХОД МАТЧА */}
       <div className="prediction-section">
-        <div className="prediction-section-label">Исход матча</div>
+        <div className="prediction-section-label">Исход матча <span className="points-hint">+{POINTS_OUTCOME}</span></div>
         <div className="outcome-buttons">
           <button
             type="button"
@@ -193,7 +193,7 @@ export default function PredictionForm({ match, existingPrediction, onSaved }) {
 
       {/* ТОЧНЫЙ СЧЁТ */}
       <div className="prediction-section">
-        <div className="prediction-section-label">Точный счёт</div>
+        <div className="prediction-section-label">Точный счёт <span className="points-hint">+{POINTS_EXACT_SCORE}</span></div>
         <div className="score-inputs">
           <div className="team-label">{homeFlag} {homeName}</div>
           <input
@@ -221,7 +221,7 @@ export default function PredictionForm({ match, existingPrediction, onSaved }) {
 
       {/* ГОЛЫ */}
       <div className="prediction-section">
-        <div className="prediction-section-label">Голы</div>
+        <div className="prediction-section-label">Голы <span className="points-hint">+{POINTS_GOALS_THRESHOLD}</span></div>
         <div className="goals-inputs">
           <select
             value={goalsTeam}

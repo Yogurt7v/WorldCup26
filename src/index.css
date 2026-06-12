@@ -512,6 +512,21 @@ a:hover {
   color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.points-hint {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #16a34a;
+  background: #f0fdf4;
+  padding: 0.1rem 0.45rem;
+  border-radius: 99px;
+  text-transform: none;
+  letter-spacing: normal;
+  line-height: 1.4;
 }
 
 .outcome-buttons {
