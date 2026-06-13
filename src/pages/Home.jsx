@@ -6,7 +6,7 @@ import MatchList from '../components/MatchList'
 
 export default function Home() {
   const { user } = useAuth()
-  const { matches, loading, error, syncing, refresh } = useMatches()
+  const { matches, loading, error, syncError, syncing, refresh } = useMatches()
   const [predictions, setPredictions] = useState([])
 
   useEffect(() => {
@@ -58,6 +58,7 @@ export default function Home() {
       predictions={predictions}
       loading={loading}
       error={error}
+      syncError={syncError}
       syncing={syncing}
       onRefresh={refresh}
     />

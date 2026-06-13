@@ -9,20 +9,29 @@ const COUNTRY_REGION_OFFSET = {
 }
 
 async function fetchStadiumOffsets() {
-  const res = await fetch(`${API_BASE}/get/stadiums`)
-  const data = await res.json()
-  const stadiums = data.stadiums || data
-  const offsets = {}
-  for (const s of stadiums) {
-    const countryOffsets = COUNTRY_REGION_OFFSET[s.country_en]
-    if (countryOffsets) {
-      const offset = countryOffsets[s.region]
-      if (offset !== undefined) {
-        offsets[s.id] = offset
+  const controller = new AbortController()
+  const timeoutId = setTimeout(
+    () => controller.abort(new DOMException('Таймаут запроса к worldcup26.ir', 'TimeoutError')),
+    15000
+  )
+  try {
+    const res = await fetch(`${API_BASE}/get/stadiums`, { signal: controller.signal })
+    const data = await res.json()
+    const stadiums = data.stadiums || data
+    const offsets = {}
+    for (const s of stadiums) {
+      const countryOffsets = COUNTRY_REGION_OFFSET[s.country_en]
+      if (countryOffsets) {
+        const offset = countryOffsets[s.region]
+        if (offset !== undefined) {
+          offsets[s.id] = offset
+        }
       }
     }
+    return offsets
+  } finally {
+    clearTimeout(timeoutId)
   }
-  return offsets
 }
 
 function parseMatchDate(dateStr, utcOffsetHours) {
@@ -64,14 +73,23 @@ export async function syncMatchesFromOpenLigaDB() {
     15000
   )
 
-  const [gamesRes, offsets] = await Promise.all([
-    fetch(`${API_BASE}/get/games`, { signal: controller.signal }),
-    fetchStadiumOffsets(),
-  ])
+  try {
+    const [gamesRes, offsets] = await Promise.all([
+      fetch(`${API_BASE}/get/games`, { signal: controller.signal }),
+      fetchStadiumOffsets(),
+    ])
 
-  clearTimeout(timeoutId)
-  if (!gamesRes.ok) throw new Error(`Failed to fetch matches: ${gamesRes.status}`)
-  const data = await gamesRes.json()
-  const matches = data.games || data
-  return matches.map((m) => transformMatch(m, offsets))
+    if (!gamesRes.ok) throw new Error(`Failed to fetch matches: ${gamesRes.status}`)
+    const data = await gamesRes.json()
+    const matches = data.games || data
+    return matches.map((m) => transformMatch(m, offsets))
+  } catch (err) {
+    const msg = err.name === 'TimeoutError' || err.name === 'AbortError'
+      ? 'Таймаут соединения с сервером'
+      : err.message
+    console.error('Sync error:', msg)
+    return []
+  } finally {
+    clearTimeout(timeoutId)
+  }
 }

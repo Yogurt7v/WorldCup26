@@ -1,6 +1,6 @@
 import MatchCard from './MatchCard'
 
-export default function MatchList({ matches, predictions, loading, error, syncing, onRefresh }) {
+export default function MatchList({ matches, predictions, loading, error, syncError, syncing, onRefresh }) {
   const predictionMap = {}
   if (predictions) {
     for (const p of predictions) {
@@ -21,6 +21,11 @@ export default function MatchList({ matches, predictions, loading, error, syncin
           )}
         </div>
       </div>
+      {syncError && (
+        <div className="card" style={{ textAlign: 'center', padding: '0.6rem 1rem', marginBottom: '0.5rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+          Не удалось обновить данные: {syncError}
+        </div>
+      )}
       {loading ? (
         <div className="spinner">Загрузка матчей...</div>
       ) : error ? (

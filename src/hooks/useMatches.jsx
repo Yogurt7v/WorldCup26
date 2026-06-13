@@ -8,6 +8,7 @@ export function useMatches() {
   const [matches, setMatches] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [syncError, setSyncError] = useState(null)
   const [syncing, setSyncing] = useState(false)
   const subRef = useRef(null)
 
@@ -24,10 +25,12 @@ export function useMatches() {
           ignoreDuplicates: false,
         })
       }
+
+      setSyncError(null)
     } catch (err) {
       const msg = err.name === 'TimeoutError' || err.name === 'AbortError' ? 'Таймаут соединения с сервером' : err.message
+      setSyncError(msg)
       console.error('Sync error:', msg)
-      throw new Error(msg, { cause: err })
     } finally {
       isSyncing = false
       setSyncing(false)
@@ -52,9 +55,18 @@ export function useMatches() {
         if (!cancelled) {
           if (!data || data.length === 0) {
             await doSync()
+            const { data: refetched } = await supabase
+              .from('matches')
+              .select('*')
+              .order('match_date', { ascending: true })
+            if (!cancelled) {
+              setMatches(refetched || [])
+              setLoading(false)
+            }
+          } else {
+            setMatches(data)
+            setLoading(false)
           }
-          setMatches(data || [])
-          setLoading(false)
         }
       } catch (err) {
         if (!cancelled) {
@@ -109,16 +121,13 @@ export function useMatches() {
 
   const refresh = useCallback(async () => {
     setError(null)
-    try {
-      await doSync()
-      const { data } = await supabase.from('matches').select('*').order('match_date', { ascending: true })
-      if (data) setMatches(data)
-    } catch (err) {
-      setError(err.name === 'TimeoutError' || err.name === 'AbortError' ? 'Таймаут соединения с сервером' : err.message)
-    }
+    setSyncError(null)
+    await doSync()
+    const { data } = await supabase.from('matches').select('*').order('match_date', { ascending: true })
+    if (data) setMatches(data)
   }, [doSync])
 
-  return { matches, loading, error, syncing, refresh }
+  return { matches, loading, error, syncError, syncing, refresh }
 }
 
 export function useMatch(matchId) {
