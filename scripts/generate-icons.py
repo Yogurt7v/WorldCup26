@@ -1,84 +1,106 @@
 #!/usr/bin/env python3
-"""Generate simple PNG icons for PWA."""
+"""Generate PWA icons with a modern football + '26' design."""
 
-import struct
-import zlib
+from PIL import Image, ImageDraw, ImageFont
 import os
 
-def create_png(width, height, pixels):
-    """Create a PNG file from raw RGB pixel data."""
-    def chunk(chunk_type, data):
-        c = chunk_type + data
-        return struct.pack('>I', len(data)) + c + struct.pack('>I', zlib.crc32(c) & 0xffffffff)
+FONT_PATH = '/System/Library/Fonts/HelveticaNeue.ttc'
+DARK = (15, 23, 42)
+LIGHT = (248, 250, 252)
+ACCENT = (37, 99, 235)
+BALL_SHADOW = (200, 200, 200)
+PENTAGON_COLOR = (30, 41, 59)
 
-    # PNG signature
-    sig = b'\x89PNG\r\n\x1a\n'
 
-    # IHDR
-    ihdr = struct.pack('>IIBBBBB', width, height, 8, 2, 0, 0, 0)
-    ihdr_chunk = chunk(b'IHDR', ihdr)
+def draw_pentagon(draw, cx, cy, radius, fill):
+    """Draw a regular pentagon centered at (cx, cy)."""
+    import math
+    points = []
+    for i in range(5):
+        angle = math.radians(-90 + i * 72)
+        x = cx + radius * math.cos(angle)
+        y = cy + radius * math.sin(angle)
+        points.append((x, y))
+    draw.polygon(points, fill=fill)
 
-    # IDAT - raw pixel data with filter byte (0) per row
-    raw = b''
-    for y in range(height):
-        raw += b'\x00'  # filter byte (none)
-        for x in range(width):
-            idx = (y * width + x) * 3
-            raw += bytes(pixels[idx:idx+3])
 
-    compressed = zlib.compress(raw)
-    idat_chunk = chunk(b'IDAT', compressed)
+def draw_ball(draw, cx, cy, radius):
+    """Draw a soccer ball pattern."""
+    outer_r = radius
+    inner_r = radius * 0.42
 
-    # IEND
-    iend_chunk = chunk(b'IEND', b'')
+    # outer circle
+    draw.ellipse(
+        [cx - outer_r, cy - outer_r, cx + outer_r, cy + outer_r],
+        fill=LIGHT
+    )
 
-    return sig + ihdr_chunk + idat_chunk + iend_chunk
+    # central pentagon
+    draw_pentagon(draw, cx, cy, inner_r, PENTAGON_COLOR)
+
+    # lines from pentagon vertices to edge
+    import math
+    for i in range(5):
+        angle = math.radians(-90 + i * 72)
+        ex = cx + outer_r * math.cos(angle)
+        ey = cy + outer_r * math.sin(angle)
+        vx = cx + inner_r * math.cos(angle)
+        vy = cy + inner_r * math.sin(angle)
+        draw.line([(vx, vy), (ex, ey)], fill=PENTAGON_COLOR, width=max(2, outer_r // 25))
+
+    # outer ring stroke
+    draw.ellipse(
+        [cx - outer_r, cy - outer_r, cx + outer_r, cy + outer_r],
+        outline=PENTAGON_COLOR, width=max(2, outer_r // 20)
+    )
+
 
 def make_icon(size):
-    """Create a football-themed icon."""
-    pixels = bytearray(size * size * 3)
+    """Create a 192/512 icon with football + '26'."""
+    img = Image.new('RGBA', (size, size), DARK)
+    draw = ImageDraw.Draw(img)
+
     cx = cy = size // 2
-    r = size // 2 - 2
+    ball_radius = int(size * 0.38)
+    font_size = int(size * 0.42)
 
-    # Primary color (dark blue)
-    bg = (15, 23, 42)
-    # Secondary (slightly lighter)
-    bg2 = (30, 41, 59)
-    # Accent color for ball
-    ball_color = (245, 245, 245)
-    # Stripe color
-    stripe = (200, 200, 200)
-
+    # subtle background radial gradient effect
     for y in range(size):
         for x in range(size):
-            idx = (y * size + x) * 3
             dx, dy = x - cx, y - cy
-            dist = (dx*dx + dy*dy) ** 0.5
+            dist = (dx * dx + dy * dy) ** 0.5
+            if dist < size * 0.45:
+                factor = dist / (size * 0.45)
+                r = int(DARK[0] + (ACCENT[0] - DARK[0]) * (1 - factor) * 0.15)
+                g = int(DARK[1] + (ACCENT[1] - DARK[1]) * (1 - factor) * 0.15)
+                b = int(DARK[2] + (ACCENT[2] - DARK[2]) * (1 - factor) * 0.15)
+                img.putpixel((x, y), (r, g, b, 255))
 
-            # Checkerboard pattern for background
-            checker_x = x // (size // 8)
-            checker_y = y // (size // 8)
-            is_checker = (checker_x + checker_y) % 2 == 0
+    # draw the soccer ball
+    draw_ball(draw, cx, cy, ball_radius)
 
-            if is_checker:
-                pixels[idx:idx+3] = bg
-            else:
-                pixels[idx:idx+3] = bg2
+    # "26" text overlay
+    try:
+        font = ImageFont.truetype(FONT_PATH, font_size)
+    except Exception:
+        font = ImageFont.load_default()
 
-            # Draw a simple football (circle with pentagon pattern)
-            if dist <= r:
-                if dx < 0 and dy < 0 and dx < dy:
-                    pixels[idx:idx+3] = ball_color
-                elif dx > 0 and dy > 0 and dx > dy:
-                    pixels[idx:idx+3] = ball_color
-                elif abs(dx) < r * 0.15 and abs(dy) < r:
-                    pixels[idx:idx+3] = ball_color
-                elif abs(dy) < r * 0.15 and abs(dx) < r:
-                    pixels[idx:idx+3] = ball_color
-                else:
-                    pixels[idx:idx+3] = stripe
+    text = "26"
+    bbox = draw.textbbox((0, 0), text, font=font)
+    tw = bbox[2] - bbox[0]
+    th = bbox[3] - bbox[1]
+    tx = (size - tw) / 2 - bbox[0]
+    ty = (size - th) / 2 - bbox[1]
 
-    return pixels
+    # text shadow
+    shadow_offset = max(2, size // 64)
+    draw.text((tx + shadow_offset, ty + shadow_offset), text,
+              font=font, fill=(0, 0, 0, 100))
+    # main text
+    draw.text((tx, ty), text, font=font, fill=DARK)
+
+    return img
+
 
 def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -86,12 +108,11 @@ def main():
     os.makedirs(icons_dir, exist_ok=True)
 
     for size in [192, 512]:
-        pixels = make_icon(size)
-        png_data = create_png(size, size, pixels)
+        img = make_icon(size)
         path = os.path.join(icons_dir, f'icon-{size}x{size}.png')
-        with open(path, 'wb') as f:
-            f.write(png_data)
+        img.save(path, 'PNG')
         print(f'Created {path} ({size}x{size})')
+
 
 if __name__ == '__main__':
     main()
