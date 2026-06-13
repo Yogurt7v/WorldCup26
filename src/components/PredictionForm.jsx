@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../hooks/useAuth'
 import { translateTeamName } from '../lib/teamNames'
@@ -67,7 +67,7 @@ export default function PredictionForm({ match, existingPrediction, onSaved }) {
     setSelectedOutcome(selectedOutcome === outcome ? null : outcome)
   }
 
-  const handleDelete = async () => {
+  const handleDelete = useCallback(async () => {
     if (!existingPrediction) return
     setDeleting(true)
     setError('')
@@ -93,7 +93,7 @@ export default function PredictionForm({ match, existingPrediction, onSaved }) {
     } finally {
       setDeleting(false)
     }
-  }
+  }, [existingPrediction, user?.id, match?.id, onSaved])
 
   const handleSubmit = async (e) => {
     e.preventDefault()

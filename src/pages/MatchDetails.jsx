@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Navigate, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useMatch } from '../hooks/useMatches'
 import { useAuth } from '../hooks/useAuth'
@@ -12,6 +12,8 @@ import PredictionsList from '../components/PredictionsList'
 export default function MatchDetails() {
   const { id } = useParams()
   const matchId = parseInt(id, 10)
+
+  if (isNaN(matchId)) return <Navigate to="/" replace />
   const { match, loading: matchLoading } = useMatch(matchId)
   const { user } = useAuth()
   const [myPrediction, setMyPrediction] = useState(null)

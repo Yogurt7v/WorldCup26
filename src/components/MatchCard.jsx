@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { translateTeamName } from '../lib/teamNames'
 import { getFlagForTeam } from '../lib/flags'
@@ -18,7 +19,7 @@ function statusClass(status) {
   return status ? status.toLowerCase() : ''
 }
 
-export default function MatchCard({ match, userPrediction }) {
+function MatchCard({ match, userPrediction }) {
   const navigate = useNavigate()
 
   const isFinished = match.status === 'FINISHED'
@@ -78,3 +79,5 @@ export default function MatchCard({ match, userPrediction }) {
     </div>
   )
 }
+
+export default memo(MatchCard)

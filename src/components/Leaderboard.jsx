@@ -8,10 +8,18 @@ function rankClass(index) {
 }
 
 export default function Leaderboard() {
-  const { leaderboard, loading } = useLeaderboard()
+  const { leaderboard, loading, error } = useLeaderboard()
 
   if (loading) {
     return <div className="spinner">Загрузка таблицы...</div>
+  }
+
+  if (error) {
+    return (
+      <div className="card" style={{ textAlign: 'center', color: 'var(--danger)', padding: '2rem' }}>
+        Ошибка загрузки: {error}
+      </div>
+    )
   }
 
   if (leaderboard.length === 0) {

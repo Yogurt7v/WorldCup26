@@ -2,7 +2,7 @@ import { usePredictions } from '../hooks/useMatches'
 import { getPredictionTypeIcon, getPredictionSummary } from '../lib/scoring'
 
 export default function PredictionsList({ matchId, matchStatus }) {
-  const { predictions, loading } = usePredictions(matchId)
+  const { predictions, loading, error } = usePredictions(matchId)
   const isFinished = matchStatus === 'FINISHED'
 
   return (
@@ -11,6 +11,10 @@ export default function PredictionsList({ matchId, matchStatus }) {
       <div className="predictions-list">
         {loading ? (
           <div className="spinner">Загрузка...</div>
+        ) : error ? (
+          <div className="empty" style={{ color: 'var(--danger)' }}>
+            Ошибка: {error}
+          </div>
         ) : predictions.length === 0 ? (
           <div className="empty">Пока никто не сделал прогноз</div>
         ) : (

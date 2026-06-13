@@ -4,6 +4,26 @@ import { syncMatchesFromOpenLigaDB } from '../lib/openligadb'
 
 let isSyncing = false
 
+function getNextInterval(matches) {
+  const now = Date.now()
+
+  if (matches.some((m) => m.status === 'LIVE')) return 30000
+
+  const scheduled = matches
+    .filter((m) => m.status === 'SCHEDULED')
+    .map((m) => new Date(m.match_date).getTime())
+    .filter((t) => t > now)
+
+  if (scheduled.length === 0) return 1800000
+
+  const next = Math.min(...scheduled)
+  const diff = next - now
+
+  if (diff < 7200000) return 60000
+  if (diff < 86400000) return 300000
+  return 1800000
+}
+
 export function useMatches() {
   const [matches, setMatches] = useState([])
   const [loading, setLoading] = useState(true)
@@ -11,6 +31,7 @@ export function useMatches() {
   const [syncError, setSyncError] = useState(null)
   const [syncing, setSyncing] = useState(false)
   const subRef = useRef(null)
+  const matchesRef = useRef([])
 
   const doSync = useCallback(async () => {
     if (isSyncing) return
@@ -39,6 +60,7 @@ export function useMatches() {
 
   useEffect(() => {
     let cancelled = false
+    let syncTimeoutId
 
     async function load() {
       setLoading(true)
@@ -78,9 +100,18 @@ export function useMatches() {
 
     load()
 
-    const interval = setInterval(() => {
-      doSync()
-    }, 60000)
+    function scheduleSync() {
+      const interval = getNextInterval(matchesRef.current)
+      syncTimeoutId = setTimeout(async () => {
+        await doSync()
+        if (!cancelled) scheduleSync()
+      }, interval)
+    }
+
+    // Wait for initial load to finish before first scheduled sync
+    const initialDelay = setTimeout(() => {
+      if (!cancelled) scheduleSync()
+    }, 1000)
 
     const sub = supabase
       .channel('matches-changes')
@@ -112,12 +143,18 @@ export function useMatches() {
 
     return () => {
       cancelled = true
-      clearInterval(interval)
+      clearTimeout(initialDelay)
+      clearTimeout(syncTimeoutId)
       if (subRef.current) {
         supabase.removeChannel(subRef.current)
       }
     }
   }, [doSync])
+
+  // Keep matchesRef in sync with latest matches
+  useEffect(() => {
+    matchesRef.current = matches
+  }, [matches])
 
   const refresh = useCallback(async () => {
     setError(null)
@@ -179,19 +216,23 @@ export function useMatch(matchId) {
 export function usePredictions(matchId) {
   const [predictions, setPredictions] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
     if (!matchId) return
 
     setLoading(true)
+    setError(null)
 
     supabase
       .from('predictions')
       .select('id, user_id, match_id, predicted_home_score, predicted_away_score, outcome, goals_team, goals_threshold, points_earned, created_at, users (username)')
       .eq('match_id', matchId)
       .order('created_at', { ascending: false })
-      .then(({ data, error }) => {
-        if (!error && data) {
+      .then(({ data, error: fetchError }) => {
+        if (fetchError) {
+          setError(fetchError.message)
+        } else {
           setPredictions(data)
         }
         setLoading(false)
@@ -225,21 +266,25 @@ export function usePredictions(matchId) {
     }
   }, [matchId])
 
-  return { predictions, loading }
+  return { predictions, loading, error }
 }
 
 export function useLeaderboard() {
   const [leaderboard, setLeaderboard] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
     setLoading(true)
+    setError(null)
 
     supabase
       .from('leaderboard')
       .select('*')
-      .then(({ data, error }) => {
-        if (!error && data) {
+      .then(({ data, error: fetchError }) => {
+        if (fetchError) {
+          setError(fetchError.message)
+        } else if (data) {
           setLeaderboard(data)
         }
         setLoading(false)
@@ -266,5 +311,5 @@ export function useLeaderboard() {
     }
   }, [])
 
-  return { leaderboard, loading }
+  return { leaderboard, loading, error }
 }
