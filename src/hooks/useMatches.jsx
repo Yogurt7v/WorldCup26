@@ -20,7 +20,6 @@ function getNextInterval(matches) {
   const diff = next - now
 
   if (diff < 7200000) return 60000
-  if (diff < 86400000) return 300000
   return 1800000
 }
 
