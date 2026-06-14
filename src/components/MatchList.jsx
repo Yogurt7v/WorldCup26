@@ -1,6 +1,9 @@
+import { useEffect, useRef } from 'react'
+import { useMatchesContext } from '../lib/MatchesContext'
 import MatchCard from './MatchCard'
 
-export default function MatchList({ matches, predictions, loading, error, syncError, syncing, onRefresh }) {
+export default function MatchList({ matches, predictions, loading, error, syncError }) {
+  const { syncing, refresh } = useMatchesContext()
   const predictionMap = {}
   if (predictions) {
     for (const p of predictions) {
@@ -8,18 +11,22 @@ export default function MatchList({ matches, predictions, loading, error, syncEr
     }
   }
 
+  const hasScrolled = useRef(false)
+
+  useEffect(() => {
+    if (!loading && matches.length > 0 && !hasScrolled.current) {
+      const target = matches.find(m => m.status !== 'FINISHED')
+      if (target) {
+        document.getElementById(`match-${target.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }
+      hasScrolled.current = true
+    }
+  }, [loading, matches])
+
   return (
     <div className="match-list">
       <div className="match-list-header">
         <h2>Расписание матчей</h2>
-        <div className="sync-info">
-          {syncing && <span>Обновление...</span>}
-          {!syncing && (
-            <button className="btn btn-outline" onClick={onRefresh} style={{ padding: '0.3rem 0.8rem', fontSize: '0.8rem' }}>
-              Обновить
-            </button>
-          )}
-        </div>
       </div>
       {syncError && (
         <div className="card" style={{ textAlign: 'center', padding: '0.6rem 1rem', marginBottom: '0.5rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
@@ -33,7 +40,7 @@ export default function MatchList({ matches, predictions, loading, error, syncEr
           <p style={{ color: 'var(--danger)', marginBottom: '1rem' }}>
             Ошибка загрузки: {error}
           </p>
-          <button className="btn btn-outline" onClick={onRefresh}>
+          <button className="btn btn-outline" onClick={refresh}>
             Повторить
           </button>
         </div>
@@ -43,11 +50,12 @@ export default function MatchList({ matches, predictions, loading, error, syncEr
         </div>
       ) : (
         matches.map((match) => (
-          <MatchCard
-            key={match.id}
-            match={match}
-            userPrediction={predictionMap[match.id]}
-          />
+          <div key={match.id} id={`match-${match.id}`}>
+            <MatchCard
+              match={match}
+              userPrediction={predictionMap[match.id]}
+            />
+          </div>
         ))
       )}
     </div>

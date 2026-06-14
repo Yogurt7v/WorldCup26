@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '../hooks/useAuth'
-import { useMatches } from '../hooks/useMatches'
+import { useMatchesContext } from '../lib/MatchesContext'
 import { supabase } from '../lib/supabase'
 import MatchList from '../components/MatchList'
 
 export default function Home() {
   const { user } = useAuth()
-  const { matches, loading, error, syncError, syncing, refresh } = useMatches()
+  const { matches, loading, error, syncError } = useMatchesContext()
   const [predictions, setPredictions] = useState([])
 
   useEffect(() => {
@@ -59,8 +59,6 @@ export default function Home() {
       loading={loading}
       error={error}
       syncError={syncError}
-      syncing={syncing}
-      onRefresh={refresh}
     />
   )
 }

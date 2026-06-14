@@ -286,11 +286,6 @@ a:hover {
   font-weight: 700;
 }
 
-.match-list-header .sync-info {
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-}
-
 .match-card {
   display: flex;
   flex-direction: column;
@@ -886,4 +881,28 @@ a:hover {
     justify-content: center;
     margin-bottom: 0.3rem;
   }
+}
+
+.btn-refresh {
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--text-secondary);
+  padding: 0.2rem;
+  transition: color 0.2s;
+}
+
+.btn-refresh:hover {
+  color: var(--accent);
+}
+
+.btn-refresh.spinning {
+  animation: spin 0.8s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
