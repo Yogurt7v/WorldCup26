@@ -18,7 +18,7 @@ export default function Layout() {
         <div className="container">
           <div style={{ gap: "1rem", display: "flex", alignItems: "center" }}>
             <NavLink to="/" className="logo">
-              ⚽ ЧМ-2026
+              <img src="/icons/96x96.png" alt="" className="logo-icon" />
             </NavLink>
             <button
               className={`btn-refresh${syncing ? " spinning" : ""}`}

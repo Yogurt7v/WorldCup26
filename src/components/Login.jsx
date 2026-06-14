@@ -28,7 +28,7 @@ export default function Login() {
   return (
     <div className="login-page">
       <div className="login-card">
-        <h1>⚽ ЧМ-2026</h1>
+        <h1><img src="/icons/96x96.png" alt="" className="logo-icon" /></h1>
         <p>Войдите, чтобы делать прогнозы на матчи</p>
         <form onSubmit={handleSubmit}>
           <div className="field">

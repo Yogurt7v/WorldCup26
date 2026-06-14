@@ -4,6 +4,19 @@ import { syncMatchesFromOpenLigaDB } from '../lib/openligadb'
 
 let isSyncing = false
 
+const CACHE_KEY = 'matches-cache'
+
+function loadCached() {
+  try {
+    const raw = localStorage.getItem(CACHE_KEY)
+    return raw ? JSON.parse(raw) : null
+  } catch (e) { return null }
+}
+
+function saveCache(matches) {
+  try { localStorage.setItem(CACHE_KEY, JSON.stringify(matches)) } catch (e) { /* ignore */ }
+}
+
 function getNextInterval(matches) {
   const now = Date.now()
 
@@ -39,14 +52,12 @@ export function useMatches() {
     try {
       const transformed = await syncMatchesFromOpenLigaDB()
 
-      for (const match of transformed) {
-        await supabase.from('matches').upsert(match, {
-          onConflict: 'id',
-          ignoreDuplicates: false,
-        })
-      }
+      const { error } = await supabase
+        .from('matches')
+        .upsert(transformed, { onConflict: 'id', ignoreDuplicates: false })
 
-      setSyncError(null)
+      if (error) console.error('Batch upsert error:', error)
+      else setSyncError(null)
     } catch (err) {
       const msg = err.name === 'TimeoutError' || err.name === 'AbortError' ? 'Таймаут соединения с сервером' : err.message
       setSyncError(msg)
@@ -62,8 +73,15 @@ export function useMatches() {
     let syncTimeoutId
 
     async function load() {
-      setLoading(true)
       setError(null)
+
+      const cached = loadCached()
+      if (cached) {
+        setMatches(cached)
+        setLoading(false)
+      } else {
+        setLoading(true)
+      }
 
       try {
         const { data, error: fetchError } = await supabase
@@ -80,14 +98,16 @@ export function useMatches() {
               .from('matches')
               .select('*')
               .order('match_date', { ascending: true })
-            if (!cancelled) {
-              setMatches(refetched || [])
-              setLoading(false)
+            if (!cancelled && refetched) {
+              setMatches(refetched)
+              saveCache(refetched)
             }
           } else {
             setMatches(data)
-            setLoading(false)
+            saveCache(data)
           }
+          setLoading(false)
+          if (!cancelled) scheduleSync()
         }
       } catch (err) {
         if (!cancelled) {
@@ -106,11 +126,6 @@ export function useMatches() {
         if (!cancelled) scheduleSync()
       }, interval)
     }
-
-    // Wait for initial load to finish before first scheduled sync
-    const initialDelay = setTimeout(() => {
-      if (!cancelled) scheduleSync()
-    }, 1000)
 
     const sub = supabase
       .channel('matches-changes')
@@ -142,7 +157,6 @@ export function useMatches() {
 
     return () => {
       cancelled = true
-      clearTimeout(initialDelay)
       clearTimeout(syncTimeoutId)
       if (subRef.current) {
         supabase.removeChannel(subRef.current)
@@ -160,7 +174,10 @@ export function useMatches() {
     setSyncError(null)
     await doSync()
     const { data } = await supabase.from('matches').select('*').order('match_date', { ascending: true })
-    if (data) setMatches(data)
+    if (data) {
+      setMatches(data)
+      saveCache(data)
+    }
   }, [doSync])
 
   return { matches, loading, error, syncError, syncing, refresh }

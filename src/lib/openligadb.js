@@ -8,7 +8,13 @@ const COUNTRY_REGION_OFFSET = {
   'United States': { Eastern: -4, Central: -5, Western: -7 },
 }
 
-async function fetchStadiumOffsets() {
+const COUNTRY_REGION_TZ = {
+  'United States': { Eastern: 'America/New_York', Central: 'America/Chicago', Western: 'America/Los_Angeles' },
+  Canada: { Eastern: 'America/Toronto', Central: 'America/Winnipeg', Western: 'America/Vancouver' },
+  Mexico: { Central: 'America/Mexico_City' },
+}
+
+async function fetchStadiumData() {
   const controller = new AbortController()
   const timeoutId = setTimeout(
     () => controller.abort(new DOMException('Таймаут запроса к worldcup26.ir', 'TimeoutError')),
@@ -18,17 +24,15 @@ async function fetchStadiumOffsets() {
     const res = await fetch(`${API_BASE}/get/stadiums`, { signal: controller.signal })
     const data = await res.json()
     const stadiums = data.stadiums || data
-    const offsets = {}
+    const info = {}
     for (const s of stadiums) {
-      const countryOffsets = COUNTRY_REGION_OFFSET[s.country_en]
-      if (countryOffsets) {
-        const offset = countryOffsets[s.region]
-        if (offset !== undefined) {
-          offsets[s.id] = offset
-        }
+      const offset = COUNTRY_REGION_OFFSET[s.country_en]?.[s.region]
+      const timezone = COUNTRY_REGION_TZ[s.country_en]?.[s.region] || 'Europe/Moscow'
+      if (offset !== undefined) {
+        info[s.id] = { offset, city: s.city_en, name_en: s.name_en, timezone }
       }
     }
-    return offsets
+    return info
   } finally {
     clearTimeout(timeoutId)
   }
@@ -49,19 +53,23 @@ function mapStatus(match) {
   return 'SCHEDULED'
 }
 
-function transformMatch(apiMatch, stadiumOffsets) {
-  const offset = stadiumOffsets[apiMatch.stadium_id]
+function transformMatch(apiMatch, stadiumData) {
+  const data = stadiumData[apiMatch.stadium_id] || {}
+  const offset = data.offset != null ? data.offset : 0
   return {
     id: parseInt(apiMatch.id, 10),
     league_id: 4897,
     home_team: translateTeamName(apiMatch.home_team_name_en) || 'Unknown',
     away_team: translateTeamName(apiMatch.away_team_name_en) || 'Unknown',
-    match_date: parseMatchDate(apiMatch.local_date, offset != null ? offset : 0),
+    match_date: parseMatchDate(apiMatch.local_date, offset),
     status: mapStatus(apiMatch),
     home_score: parseInt(apiMatch.home_score, 10) || 0,
     away_score: parseInt(apiMatch.away_score, 10) || 0,
     half_time_home_score: null,
     half_time_away_score: null,
+    stadium_name: data.name_en || null,
+    city: data.city || null,
+    timezone: data.timezone || null,
     last_update: new Date().toISOString(),
   }
 }
@@ -74,15 +82,15 @@ export async function syncMatchesFromOpenLigaDB() {
   )
 
   try {
-    const [gamesRes, offsets] = await Promise.all([
+    const [gamesRes, stadiumData] = await Promise.all([
       fetch(`${API_BASE}/get/games`, { signal: controller.signal }),
-      fetchStadiumOffsets(),
+      fetchStadiumData(),
     ])
 
     if (!gamesRes.ok) throw new Error(`Failed to fetch matches: ${gamesRes.status}`)
     const data = await gamesRes.json()
     const matches = data.games || data
-    return matches.map((m) => transformMatch(m, offsets))
+    return matches.map((m) => transformMatch(m, stadiumData))
   } catch (err) {
     const msg = err.name === 'TimeoutError' || err.name === 'AbortError'
       ? 'Таймаут соединения с сервером'

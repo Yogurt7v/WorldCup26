@@ -4,6 +4,19 @@ import { useMatchesContext } from '../lib/MatchesContext'
 import { supabase } from '../lib/supabase'
 import MatchList from '../components/MatchList'
 
+const PRED_CACHE_KEY = 'prediction-cache'
+
+function loadCached(userId) {
+  try {
+    const raw = localStorage.getItem(`${PRED_CACHE_KEY}-${userId}`)
+    return raw ? JSON.parse(raw) : null
+  } catch (e) { return null }
+}
+
+function saveCache(userId, data) {
+  try { localStorage.setItem(`${PRED_CACHE_KEY}-${userId}`, JSON.stringify(data)) } catch (e) { /* ignore */ }
+}
+
 export default function Home() {
   const { user } = useAuth()
   const { matches, loading, error, syncError } = useMatchesContext()
@@ -12,12 +25,18 @@ export default function Home() {
   useEffect(() => {
     if (!user) return
 
+    const cached = loadCached(user.id)
+    if (cached) setPredictions(cached)
+
     supabase
       .from('predictions')
       .select('*')
       .eq('user_id', user.id)
       .then(({ data }) => {
-        if (data) setPredictions(data)
+        if (data) {
+          setPredictions(data)
+          saveCache(user.id, data)
+        }
       }).catch(console.error)
 
     const sub = supabase
@@ -32,16 +51,18 @@ export default function Home() {
         },
         (payload) => {
           setPredictions((prev) => {
+            let next
             if (payload.eventType === 'DELETE') {
-              return prev.filter((p) => p.id !== payload.old.id)
+              next = prev.filter((p) => p.id !== payload.old.id)
+            } else if (payload.eventType === 'INSERT') {
+              next = [...prev, payload.new]
+            } else if (payload.eventType === 'UPDATE') {
+              next = prev.map((p) => (p.id === payload.new.id ? { ...p, ...payload.new } : p))
+            } else {
+              return prev
             }
-            if (payload.eventType === 'INSERT') {
-              return [...prev, payload.new]
-            }
-            if (payload.eventType === 'UPDATE') {
-              return prev.map((p) => (p.id === payload.new.id ? { ...p, ...payload.new } : p))
-            }
-            return prev
+            if (user) saveCache(user.id, next)
+            return next
           })
         }
       )

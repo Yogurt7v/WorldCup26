@@ -3,21 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { translateTeamName } from '../lib/teamNames'
 import { getFlagForTeam } from '../lib/flags'
 import { getPredictionTypeIcon, getPredictionSummary } from '../lib/scoring'
-import { formatDateShort, formatTime } from '../lib/formatters'
-
-function statusLabel(status) {
-  switch (status) {
-    case 'SCHEDULED': return 'Не начался'
-    case 'LIVE': return 'В эфире'
-    case 'HALFTIME': return 'Перерыв'
-    case 'FINISHED': return 'Завершён'
-    default: return status
-  }
-}
-
-function statusClass(status) {
-  return status ? status.toLowerCase() : ''
-}
+import { formatDateShort, formatTime, formatLocalTime } from '../lib/formatters'
 
 function MatchCard({ match, userPrediction }) {
   const navigate = useNavigate()
@@ -56,9 +42,11 @@ function MatchCard({ match, userPrediction }) {
           )}
         </div>
         <div className="match-header-right">
-          <span className={`status ${statusClass(match.status)}`}>
-            {statusLabel(match.status)}
-          </span>
+          {match.city && (
+            <span className="match-city-local" title={`${match.city}, ${formatLocalTime(match.match_date, match.timezone)}`}>
+              {match.city}, {formatLocalTime(match.match_date, match.timezone)}
+            </span>
+          )}
         </div>
       </div>
       <div className="match-body">
