@@ -77,21 +77,6 @@ BEGIN
     points := 3;
   END IF;
 
-  -- Правильная разница голов → +2
-  IF (predicted_home - predicted_away) = (actual_home - actual_away) THEN
-    points := points + 2;
-  END IF;
-
-  -- Угадано количество голов хозяев → +1
-  IF predicted_home = actual_home THEN
-    points := points + 1;
-  END IF;
-
-  -- Угадано количество голов гостей → +1
-  IF predicted_away = actual_away THEN
-    points := points + 1;
-  END IF;
-
   RETURN points;
 END;
 $$ LANGUAGE plpgsql;

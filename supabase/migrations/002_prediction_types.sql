@@ -46,23 +46,19 @@ BEGIN
     IF predicted_home = actual_home AND predicted_away = actual_away THEN
       points := points + 5;
     ELSE
-      -- Бонусы при неточном счёте
-      -- Разница голов → +2
-      IF (predicted_home - predicted_away) = (actual_home - actual_away) THEN
-        points := points + 2;
-      END IF;
-      -- Голы хозяев → +1
-      IF predicted_home = actual_home THEN
-        points := points + 1;
-      END IF;
-      -- Голы гостей → +1
-      IF predicted_away = actual_away THEN
-        points := points + 1;
+      -- Исход матча по введённому счёту → +3
+      predicted_outcome := CASE
+        WHEN predicted_home > predicted_away THEN '1'
+        WHEN predicted_home = predicted_away THEN 'X'
+        ELSE '2'
+      END;
+      IF predicted_outcome = actual_outcome THEN
+        points := points + 3;
       END IF;
     END IF;
   END IF;
 
-  -- 2. Исход (если точный счёт не вводился) → 3 очка
+  -- 2. Исход (без счёта) → 3 очка
   IF outcome IS NOT NULL AND (predicted_home IS NULL OR predicted_away IS NULL) THEN
     IF outcome = actual_outcome THEN
       points := points + 3;
