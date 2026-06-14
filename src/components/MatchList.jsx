@@ -17,7 +17,7 @@ export default function MatchList({ matches, predictions, loading, error, syncEr
     if (!loading && matches.length > 0 && !hasScrolled.current) {
       const target = matches.find(m => m.status !== 'FINISHED')
       if (target) {
-        document.getElementById(`match-${target.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        document.getElementById(`match-${target.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
       }
       hasScrolled.current = true
     }

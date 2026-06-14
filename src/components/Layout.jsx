@@ -1,37 +1,45 @@
-import { Outlet, NavLink, useNavigate } from 'react-router-dom'
-import { useAuth } from '../hooks/useAuth'
-import { useMatchesContext } from '../lib/MatchesContext'
+import { Outlet, NavLink, useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
+import { useMatchesContext } from "../lib/MatchesContext";
 
 export default function Layout() {
-  const { user, logout } = useAuth()
-  const navigate = useNavigate()
-  const { syncing, refresh } = useMatchesContext()
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const { syncing, refresh } = useMatchesContext();
 
   const handleLogout = () => {
-    logout()
-    navigate('/login')
-  }
+    logout();
+    navigate("/login");
+  };
 
   return (
     <>
       <header className="layout-header">
         <div className="container">
-          <NavLink to="/" className="logo">
-            ⚽ ЧМ-2026
-          </NavLink>
-          <button
-            className={`btn-refresh${syncing ? ' spinning' : ''}`}
-            onClick={refresh}
-            disabled={syncing}
-            title="Обновить данные"
-          >
-            ↻
-          </button>
+          <div style={{ gap: "1rem", display: "flex", alignItems: "center" }}>
+            <NavLink to="/" className="logo">
+              ⚽ ЧМ-2026
+            </NavLink>
+            <button
+              className={`btn-refresh${syncing ? " spinning" : ""}`}
+              onClick={refresh}
+              disabled={syncing}
+              title="Обновить данные"
+            >
+              ↻
+            </button>
+          </div>
           <div className="nav">
             <span className="username">👤 {user?.username}</span>
-            <NavLink to="/" end>Матчи</NavLink>
+            <NavLink to="/" end>
+              Матчи
+            </NavLink>
             <NavLink to="/leaderboard">Таблица</NavLink>
-            <button onClick={handleLogout} className="btn-outline" style={{ padding: '0.3rem 0.6rem', fontSize: '0.8rem' }}>
+            <button
+              onClick={handleLogout}
+              className="btn-outline"
+              style={{ padding: "0.3rem 0.6rem", fontSize: "0.8rem" }}
+            >
               Выйти
             </button>
           </div>
@@ -43,5 +51,5 @@ export default function Layout() {
         </div>
       </main>
     </>
-  )
+  );
 }

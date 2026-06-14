@@ -286,6 +286,10 @@ a:hover {
   font-weight: 700;
 }
 
+[id^="match-"] {
+  scroll-margin-top: 80px;
+}
+
 .match-card {
   display: flex;
   flex-direction: column;
