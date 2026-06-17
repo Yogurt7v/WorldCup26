@@ -47,9 +47,10 @@ function parseMatchDate(dateStr, utcOffsetHours) {
 }
 
 function mapStatus(match) {
-  if (match.finished === 'TRUE' || match.time_elapsed === 'finished') return 'FINISHED'
-  if (match.time_elapsed === 'live' || match.time_elapsed === 'started') return 'LIVE'
-  if (match.time_elapsed === 'halftime') return 'HALFTIME'
+  const elapsed = (match.time_elapsed || '').toLowerCase()
+  if (match.finished === 'TRUE' || elapsed === 'finished') return 'FINISHED'
+  if (elapsed === 'live' || elapsed === 'started') return 'LIVE'
+  if (elapsed === 'halftime') return 'HALFTIME'
   return 'SCHEDULED'
 }
 
