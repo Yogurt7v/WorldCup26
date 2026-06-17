@@ -4,7 +4,7 @@ export default function LeaderboardPage() {
   return (
     <div className="leaderboard-page">
       <h2>Таблица лидеров</h2>
-      <Leaderboard />
+      <div className="leaderboard-table-wrapper"><Leaderboard /></div>
     </div>
   )
 }

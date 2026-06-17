@@ -816,7 +816,6 @@ a:hover {
 .leaderboard-table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 500px;
 }
 
 .leaderboard-table th {

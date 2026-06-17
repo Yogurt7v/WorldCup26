@@ -18,7 +18,7 @@ async function fetchStadiumData() {
   const controller = new AbortController()
   const timeoutId = setTimeout(
     () => controller.abort(new DOMException('Таймаут запроса к worldcup26.ir', 'TimeoutError')),
-    15000
+    60000
   )
   try {
     const res = await fetch(`${API_BASE}/get/stadiums`, { signal: controller.signal })
@@ -75,29 +75,36 @@ function transformMatch(apiMatch, stadiumData) {
 }
 
 export async function syncMatchesFromOpenLigaDB() {
-  const controller = new AbortController()
-  const timeoutId = setTimeout(
-    () => controller.abort(new DOMException('Таймаут запроса к worldcup26.ir', 'TimeoutError')),
-    15000
-  )
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    const controller = new AbortController()
+    const timeoutId = setTimeout(
+      () => controller.abort(new DOMException('Таймаут запроса к worldcup26.ir', 'TimeoutError')),
+      60000
+    )
 
-  try {
-    const [gamesRes, stadiumData] = await Promise.all([
-      fetch(`${API_BASE}/get/games`, { signal: controller.signal }),
-      fetchStadiumData(),
-    ])
+    try {
+      const [gamesRes, stadiumData] = await Promise.all([
+        fetch(`${API_BASE}/get/games`, { signal: controller.signal }),
+        fetchStadiumData(),
+      ])
 
-    if (!gamesRes.ok) throw new Error(`Failed to fetch matches: ${gamesRes.status}`)
-    const data = await gamesRes.json()
-    const matches = data.games || data
-    return matches.map((m) => transformMatch(m, stadiumData))
-  } catch (err) {
-    const msg = err.name === 'TimeoutError' || err.name === 'AbortError'
-      ? 'Таймаут соединения с сервером'
-      : err.message
-    console.error('Sync error:', msg)
-    return []
-  } finally {
-    clearTimeout(timeoutId)
+      if (!gamesRes.ok) throw new Error(`Failed to fetch matches: ${gamesRes.status}`)
+      const data = await gamesRes.json()
+      const matches = data.games || data
+      return matches.map((m) => transformMatch(m, stadiumData))
+    } catch (err) {
+      const msg = err.name === 'TimeoutError' || err.name === 'AbortError'
+        ? 'Таймаут соединения с сервером'
+        : err.message
+      console.error(`Sync error (attempt ${attempt}/3):`, msg)
+
+      if (attempt < 3) {
+        await new Promise(r => setTimeout(r, 10000))
+      } else {
+        return []
+      }
+    } finally {
+      clearTimeout(timeoutId)
+    }
   }
 }
