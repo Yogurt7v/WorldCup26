@@ -864,6 +864,11 @@ a:hover {
 
 .leaderboard-table .name {
     font-weight: 600;
+    cursor: pointer;
+}
+
+.leaderboard-table .name:hover {
+    color: var(--accent);
 }
 
 .leaderboard-table .points {
@@ -875,6 +880,47 @@ a:hover {
 .leaderboard-table .stat {
     text-align: center;
     color: var(--text-secondary);
+}
+
+.expanded-row td {
+    padding: 0.25rem 0.5rem 0.75rem !important;
+}
+
+.user-scored-predictions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.scored-prediction-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.45rem 0.6rem;
+    background: var(--bg-primary);
+    border-radius: 8px;
+    font-size: 0.85rem;
+}
+
+.scored-prediction-item .sp-match {
+    flex: 1;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.scored-prediction-item .sp-prediction {
+    font-weight: 600;
+    color: var(--accent);
+    text-align: right;
+}
+
+.scored-prediction-item .sp-points {
+    font-weight: 700;
+    color: var(--success);
+    text-align: right;
+    min-width: 2rem;
 }
 
 @media (max-width: 600px) {

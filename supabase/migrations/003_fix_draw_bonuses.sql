@@ -27,16 +27,16 @@ BEGIN
   IF predicted_home IS NOT NULL AND predicted_away IS NOT NULL THEN
     IF predicted_home = actual_home AND predicted_away = actual_away THEN
       points := points + 5;
-    ELSE
-      -- Исход матча по введённому счёту → +3
-      predicted_outcome := CASE
-        WHEN predicted_home > predicted_away THEN '1'
-        WHEN predicted_home = predicted_away THEN 'X'
-        ELSE '2'
-      END;
-      IF predicted_outcome = actual_outcome THEN
-        points := points + 3;
-      END IF;
+    END IF;
+
+    -- Исход матча по введённому счёту → +3 (суммируется с точным счётом)
+    predicted_outcome := CASE
+      WHEN predicted_home > predicted_away THEN '1'
+      WHEN predicted_home = predicted_away THEN 'X'
+      ELSE '2'
+    END;
+    IF predicted_outcome = actual_outcome THEN
+      points := points + 3;
     END IF;
   END IF;
 

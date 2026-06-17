@@ -54,9 +54,9 @@ DECLARE
   predicted_outcome TEXT;
   actual_outcome TEXT;
 BEGIN
-  -- Точный счёт → 5 очков (максимум)
+  -- Точный счёт → 5 очков
   IF predicted_home = actual_home AND predicted_away = actual_away THEN
-    RETURN 5;
+    points := points + 5;
   END IF;
 
   -- Определяем исходы
@@ -72,9 +72,9 @@ BEGIN
     ELSE '2'
   END;
 
-  -- Правильный исход → 3 очка
+  -- Правильный исход → 3 очка (суммируется с точным счётом)
   IF predicted_outcome = actual_outcome THEN
-    points := 3;
+    points := points + 3;
   END IF;
 
   RETURN points;
