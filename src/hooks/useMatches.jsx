@@ -56,8 +56,18 @@ export function useMatches() {
         .from('matches')
         .upsert(transformed, { onConflict: 'id', ignoreDuplicates: false })
 
-      if (error) console.error('Batch upsert error:', error)
-      else setSyncError(null)
+    if (error) console.error('Batch upsert error:', error)
+    else {
+      setSyncError(null)
+      const { data } = await supabase
+        .from('matches')
+        .select('*')
+        .order('match_date', { ascending: true })
+      if (data) {
+        setMatches(data)
+        saveCache(data)
+      }
+    }
     } catch (err) {
       const msg = err.name === 'TimeoutError' || err.name === 'AbortError' ? 'Таймаут соединения с сервером' : err.message
       setSyncError(msg)
