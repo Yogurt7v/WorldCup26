@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { useMatchesContext } from '../lib/MatchesContext'
 import { supabase } from '../lib/supabase'
@@ -21,6 +22,7 @@ export default function Home() {
   const { user } = useAuth()
   const { matches, loading, error, syncError } = useMatchesContext()
   const [predictions, setPredictions] = useState([])
+  const [champData, setChampData] = useState(null)
 
   useEffect(() => {
     if (!user) return
@@ -73,13 +75,53 @@ export default function Home() {
     }
   }, [user])
 
+  useEffect(() => {
+    if (!matches.length || !user) {
+      setChampData(null)
+      return
+    }
+
+    const allFinished = matches.every(m => m.status === 'FINISHED')
+    if (!allFinished) {
+      setChampData(null)
+      return
+    }
+
+    supabase
+      .from('leaderboard')
+      .select('*')
+      .order('total_points', { ascending: false })
+      .then(({ data }) => {
+        if (data) {
+          const rank = data.findIndex(u => u.id === user.id) + 1
+          setChampData({ rank, totalPlayers: data.length })
+        }
+      })
+  }, [matches, user])
+
   return (
-    <MatchList
-      matches={matches}
-      predictions={predictions}
-      loading={loading}
-      error={error}
-      syncError={syncError}
-    />
+    <>
+      {champData && (
+        <div className="champ-banner">
+          <div className="champ-banner-icon">🏆</div>
+          <div className="champ-banner-body">
+            <div className="champ-banner-title">Чемпионат завершён!</div>
+            <div className="champ-banner-subtitle">
+              Вы заняли {champData.rank}-е место из {champData.totalPlayers}
+            </div>
+          </div>
+          <Link to="/results" className="btn btn-primary">
+            Итоги
+          </Link>
+        </div>
+      )}
+      <MatchList
+        matches={matches}
+        predictions={predictions}
+        loading={loading}
+        error={error}
+        syncError={syncError}
+      />
+    </>
   )
 }
