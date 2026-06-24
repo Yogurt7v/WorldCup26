@@ -89,6 +89,8 @@ export default function MatchDetails() {
         key={`${match.id}-${myPrediction?.id || 'new'}`}
       />
 
+      <Link to="/" className="back-link">← Назад к матчам</Link>
+
       <PredictionsList matchId={match.id} matchStatus={match.status} />
     </div>
   )

@@ -12,6 +12,7 @@ export default function PredictionForm({ match, existingPrediction, onSaved }) {
   const [awayScore, setAwayScore] = useState('')
   const [goalsTeam, setGoalsTeam] = useState('')
   const [goalsThreshold, setGoalsThreshold] = useState('')
+  const [bonusType, setBonusType] = useState('')
   const [saving, setSaving] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [error, setError] = useState('')
@@ -29,6 +30,13 @@ export default function PredictionForm({ match, existingPrediction, onSaved }) {
       setSelectedOutcome(existingPrediction.outcome)
       setGoalsTeam(existingPrediction.goals_team || '')
       setGoalsThreshold(existingPrediction.goals_threshold != null ? String(existingPrediction.goals_threshold) : '')
+      if (existingPrediction.predicted_home_score != null || existingPrediction.predicted_away_score != null) {
+        setBonusType('score')
+      } else if (existingPrediction.goals_team) {
+        setBonusType('goals')
+      } else {
+        setBonusType('')
+      }
     }
   }, [existingPrediction])
 
@@ -88,6 +96,7 @@ export default function PredictionForm({ match, existingPrediction, onSaved }) {
       setSelectedOutcome(null)
       setGoalsTeam('')
       setGoalsThreshold('')
+      setBonusType('')
 
       if (onSaved) onSaved()
     } finally {
@@ -100,9 +109,9 @@ export default function PredictionForm({ match, existingPrediction, onSaved }) {
     setError('')
     setSaved(false)
 
-    const hasScore = homeScore !== '' && awayScore !== ''
+    const hasScore = bonusType === 'score' && homeScore !== '' && awayScore !== ''
     const hasOutcome = selectedOutcome !== null
-    const hasGoals = goalsTeam !== '' && goalsThreshold !== ''
+    const hasGoals = bonusType === 'goals' && goalsTeam !== '' && goalsThreshold !== ''
 
     if (!hasScore && !hasOutcome && !hasGoals) {
       setError('Заполните хотя бы один тип прогноза')
@@ -220,93 +229,117 @@ export default function PredictionForm({ match, existingPrediction, onSaved }) {
         </div>
       </div>
 
-      {/* ТОЧНЫЙ СЧЁТ */}
+      {/* БОНУСНЫЙ ПРОГНОЗ (Точный счёт / Голы) */}
       <div className="prediction-section">
-        <div className="prediction-section-label">Точный счёт <span className="points-hint">+{POINTS_EXACT_SCORE}</span></div>
-        <div className="score-inputs">
-          <div className="team-label">{homeFlag} {homeName}</div>
-          <input
-            type="number"
-            min="0"
-            max="99"
-            value={homeScore}
-            onChange={(e) => handleHomeScoreChange(e.target.value)}
+        <div className="bonus-toggle">
+          <button
+            type="button"
+            className={`btn-bonus ${bonusType === 'score' ? 'active' : ''}`}
+            onClick={() => setBonusType(bonusType === 'score' ? '' : 'score')}
             disabled={isLocked}
-            placeholder="0"
-          />
-          <span className="vs">:</span>
-          <input
-            type="number"
-            min="0"
-            max="99"
-            value={awayScore}
-            onChange={(e) => handleAwayScoreChange(e.target.value)}
+          >
+            Точный счёт <span className="points-hint">+{POINTS_EXACT_SCORE}</span>
+          </button>
+          <button
+            type="button"
+            className={`btn-bonus ${bonusType === 'goals' ? 'active' : ''}`}
+            onClick={() => setBonusType(bonusType === 'goals' ? '' : 'goals')}
             disabled={isLocked}
-            placeholder="0"
-          />
-          <div className="team-label">{awayFlag} {awayName}</div>
+          >
+            Голы <span className="points-hint">+{POINTS_GOALS_THRESHOLD}</span>
+          </button>
         </div>
-      </div>
 
-      {/* ГОЛЫ */}
-      <div className="prediction-section">
-        <div className="prediction-section-label">Голы <span className="points-hint">+{POINTS_GOALS_THRESHOLD}</span></div>
-        <div className="goals-team-buttons">
-          <button
-            type="button"
-            className={`btn-goal-team ${goalsTeam === 'home' ? 'active' : ''}`}
-            onClick={() => {
-              if (goalsTeam === 'home') {
-                setGoalsTeam('')
-              } else {
-                setGoalsTeam('home')
-                if (!goalsTeam) setGoalsThreshold('2')
-              }
-            }}
-            disabled={isLocked}
-          >
-            {homeFlag} {homeName}
-          </button>
-          <button
-            type="button"
-            className={`btn-goal-team ${goalsTeam === 'away' ? 'active' : ''}`}
-            onClick={() => {
-              if (goalsTeam === 'away') {
-                setGoalsTeam('')
-              } else {
-                setGoalsTeam('away')
-                if (!goalsTeam) setGoalsThreshold('2')
-              }
-            }}
-            disabled={isLocked}
-          >
-            {awayFlag} {awayName}
-          </button>
-        </div>
-        {goalsTeam && (
-          <div className="goals-stepper-row">
-            <span className="goals-label">забьёт не менее</span>
-            <div className="goals-stepper">
+        {bonusType === 'score' && (
+          <div className="score-inputs">
+            <div className="team-label">{homeFlag} {homeName}</div>
+            <select
+              className="score-select"
+              value={homeScore}
+              onChange={(e) => handleHomeScoreChange(e.target.value)}
+              disabled={isLocked}
+            >
+              <option value="">-</option>
+              {Array.from({ length: 11 }, (_, i) => (
+                <option key={i} value={String(i)}>{i}</option>
+              ))}
+            </select>
+            <span className="vs">:</span>
+            <select
+              className="score-select"
+              value={awayScore}
+              onChange={(e) => handleAwayScoreChange(e.target.value)}
+              disabled={isLocked}
+            >
+              <option value="">-</option>
+              {Array.from({ length: 11 }, (_, i) => (
+                <option key={i} value={String(i)}>{i}</option>
+              ))}
+            </select>
+            <div className="team-label">{awayFlag} {awayName}</div>
+          </div>
+        )}
+
+        {bonusType === 'goals' && (
+          <>
+            <div className="goals-team-buttons">
               <button
                 type="button"
-                className="stepper-btn"
-                onClick={() => setGoalsThreshold(Math.max(2, Number(goalsThreshold) - 1))}
-                disabled={isLocked || Number(goalsThreshold) <= 2}
+                className={`btn-goal-team ${goalsTeam === 'home' ? 'active' : ''}`}
+                onClick={() => {
+                  if (goalsTeam === 'home') {
+                    setGoalsTeam('')
+                  } else {
+                    setGoalsTeam('home')
+                    if (!goalsTeam) setGoalsThreshold('2')
+                  }
+                }}
+                disabled={isLocked}
               >
-                −
+                {homeFlag} {homeName}
               </button>
-              <span className="stepper-value">{goalsThreshold}</span>
               <button
                 type="button"
-                className="stepper-btn"
-                onClick={() => setGoalsThreshold(Math.min(99, Number(goalsThreshold) + 1))}
-                disabled={isLocked || Number(goalsThreshold) >= 99}
+                className={`btn-goal-team ${goalsTeam === 'away' ? 'active' : ''}`}
+                onClick={() => {
+                  if (goalsTeam === 'away') {
+                    setGoalsTeam('')
+                  } else {
+                    setGoalsTeam('away')
+                    if (!goalsTeam) setGoalsThreshold('2')
+                  }
+                }}
+                disabled={isLocked}
               >
-                +
+                {awayFlag} {awayName}
               </button>
             </div>
-            <span className="goals-label">гол(ов)</span>
-          </div>
+            {goalsTeam && (
+              <div className="goals-stepper-row">
+                <span className="goals-label">забьёт не менее</span>
+                <div className="goals-stepper">
+                  <button
+                    type="button"
+                    className="stepper-btn"
+                    onClick={() => setGoalsThreshold(Math.max(2, Number(goalsThreshold) - 1))}
+                    disabled={isLocked || Number(goalsThreshold) <= 2}
+                  >
+                    −
+                  </button>
+                  <span className="stepper-value">{goalsThreshold}</span>
+                  <button
+                    type="button"
+                    className="stepper-btn"
+                    onClick={() => setGoalsThreshold(Math.min(99, Number(goalsThreshold) + 1))}
+                    disabled={isLocked || Number(goalsThreshold) >= 99}
+                  >
+                    +
+                  </button>
+                </div>
+                <span className="goals-label">гол(ов)</span>
+              </div>
+            )}
+          </>
         )}
       </div>
 
