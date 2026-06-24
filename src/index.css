@@ -664,29 +664,111 @@ a:hover {
     flex-wrap: wrap;
 }
 
-.goals-select {
-    padding: 0.5rem 0.6rem;
-    border: 1px solid var(--border);
-    border-radius: var(--border-radius);
-    background: var(--bg-secondary);
-    color: var(--text-primary);
-    font-family: inherit;
-    font-size: 0.9rem;
-    min-width: 140px;
-    cursor: pointer;
-}
-
-.goals-input {
-    width: 4rem;
-    text-align: center;
-    font-size: 1.1rem;
-    font-weight: 600;
-}
-
 .goals-label {
     font-size: 0.85rem;
     color: var(--text-secondary);
     white-space: nowrap;
+}
+
+.goals-team-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-goal-team {
+    flex: 1;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid var(--border);
+    border-radius: var(--border-radius);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition:
+        background 0.2s,
+        border-color 0.2s,
+        color 0.2s;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.btn-goal-team:hover:not(:disabled):not(.active) {
+    border-color: var(--accent);
+    background: #f8faff;
+}
+
+.btn-goal-team.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    font-weight: 600;
+}
+
+.btn-goal-team:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.goals-stepper-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.goals-stepper {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--border);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    background: var(--bg-secondary);
+}
+
+.stepper-btn {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    color: var(--text-primary);
+    font-size: 1.2rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    line-height: 1;
+    padding: 0;
+    transition: background 0.15s;
+}
+
+.stepper-btn:hover:not(:disabled) {
+    background: var(--bg-primary);
+}
+
+.stepper-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.stepper-value {
+    min-width: 2.5rem;
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
 }
 
 .locked-message {

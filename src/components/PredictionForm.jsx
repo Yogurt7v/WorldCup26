@@ -251,30 +251,63 @@ export default function PredictionForm({ match, existingPrediction, onSaved }) {
       {/* ГОЛЫ */}
       <div className="prediction-section">
         <div className="prediction-section-label">Голы <span className="points-hint">+{POINTS_GOALS_THRESHOLD}</span></div>
-        <div className="goals-inputs">
-          <select
-            value={goalsTeam}
-            onChange={(e) => setGoalsTeam(e.target.value)}
+        <div className="goals-team-buttons">
+          <button
+            type="button"
+            className={`btn-goal-team ${goalsTeam === 'home' ? 'active' : ''}`}
+            onClick={() => {
+              if (goalsTeam === 'home') {
+                setGoalsTeam('')
+              } else {
+                setGoalsTeam('home')
+                if (!goalsTeam) setGoalsThreshold('2')
+              }
+            }}
             disabled={isLocked}
-            className="goals-select"
           >
-            <option value="">Выберите команду</option>
-            <option value="home">{homeFlag} {homeName}</option>
-            <option value="away">{awayFlag} {awayName}</option>
-          </select>
-          <span className="goals-label">забьёт не менее</span>
-          <input
-            type="number"
-            min="2"
-            max="99"
-            value={goalsThreshold}
-            onChange={(e) => setGoalsThreshold(e.target.value)}
+            {homeFlag} {homeName}
+          </button>
+          <button
+            type="button"
+            className={`btn-goal-team ${goalsTeam === 'away' ? 'active' : ''}`}
+            onClick={() => {
+              if (goalsTeam === 'away') {
+                setGoalsTeam('')
+              } else {
+                setGoalsTeam('away')
+                if (!goalsTeam) setGoalsThreshold('2')
+              }
+            }}
             disabled={isLocked}
-            placeholder="2"
-            className="goals-input"
-          />
-          <span className="goals-label">гол(ов)</span>
+          >
+            {awayFlag} {awayName}
+          </button>
         </div>
+        {goalsTeam && (
+          <div className="goals-stepper-row">
+            <span className="goals-label">забьёт не менее</span>
+            <div className="goals-stepper">
+              <button
+                type="button"
+                className="stepper-btn"
+                onClick={() => setGoalsThreshold(Math.max(2, Number(goalsThreshold) - 1))}
+                disabled={isLocked || Number(goalsThreshold) <= 2}
+              >
+                −
+              </button>
+              <span className="stepper-value">{goalsThreshold}</span>
+              <button
+                type="button"
+                className="stepper-btn"
+                onClick={() => setGoalsThreshold(Math.min(99, Number(goalsThreshold) + 1))}
+                disabled={isLocked || Number(goalsThreshold) >= 99}
+              >
+                +
+              </button>
+            </div>
+            <span className="goals-label">гол(ов)</span>
+          </div>
+        )}
       </div>
 
       {isLocked && (
