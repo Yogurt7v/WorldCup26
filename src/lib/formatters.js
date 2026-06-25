@@ -23,3 +23,24 @@ export function formatLocalDateShort(dateStr, timezone) {
   if (!timezone) return formatDateShort(dateStr)
   return fmt(dateStr, { day: 'numeric', month: 'short', timeZone: timezone })
 }
+
+export function isInMoscowNightWindow(dateStr) {
+  const MSK = 'Europe/Moscow'
+  const now = new Date()
+
+  const mskDateStr = new Intl.DateTimeFormat('en-CA', {
+    timeZone: MSK,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(now)
+
+  const [y, m, d] = mskDateStr.split('-').map(Number)
+
+  // 18:00 MSK = 15:00 UTC, 06:00 MSK = 03:00 UTC
+  const start = Date.UTC(y, m - 1, d, 15, 0, 0)
+  const end = Date.UTC(y, m - 1, d + 1, 3, 0, 0)
+
+  const matchTime = new Date(dateStr).getTime()
+  return matchTime >= start && matchTime <= end
+}

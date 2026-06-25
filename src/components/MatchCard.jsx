@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { translateTeamName } from '../lib/teamNames'
 import { getFlagForTeam } from '../lib/flags'
 import { getPredictionTypeIcon, getPredictionSummary } from '../lib/scoring'
-import { formatDateShort, formatTime, formatLocalTime } from '../lib/formatters'
+import { formatDateShort, formatTime, formatLocalTime, isInMoscowNightWindow } from '../lib/formatters'
 
 function MatchCard({ match, userPrediction }) {
   const navigate = useNavigate()
@@ -11,13 +11,14 @@ function MatchCard({ match, userPrediction }) {
   const isFinished = match.status === 'FINISHED'
   const isLive = match.status === 'LIVE' || match.status === 'HALFTIME'
   const canPredict = !isFinished && !isLive
+  const isUpcomingNight = match.status === 'SCHEDULED' && isInMoscowNightWindow(match.match_date)
 
   const scoreDisplay = isFinished || isLive
     ? `${match.home_score} : ${match.away_score}`
     : '- : -'
 
   return (
-    <div className={`match-card card${isFinished ? ' finished' : ''}`} onClick={() => navigate(`/match/${match.id}`)}>
+    <div className={`match-card card${isFinished ? ' finished' : ''}${isUpcomingNight ? ' upcoming' : ''}`} onClick={() => navigate(`/match/${match.id}`)}>
       <div className="match-header">
         <div className="match-header-left">
           <span className="match-date">{formatDateShort(match.match_date)} {formatTime(match.match_date)}</span>
