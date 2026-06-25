@@ -32,7 +32,7 @@ export default function Leaderboard() {
       .then(({ data }) => {
         if (data) {
           data.sort(
-            (a, b) => new Date(a.matches.match_date) - new Date(b.matches.match_date)
+            (a, b) => new Date(b.matches.match_date) - new Date(a.matches.match_date)
           )
           setUserPredictions(data)
         }

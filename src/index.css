@@ -333,7 +333,7 @@ a:hover {
 }
 
 .match-card.upcoming {
-    border: 0.5px solid #007aff;
+    border: 1px solid #007aff;
 }
 
 .match-card:not(.finished) {
