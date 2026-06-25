@@ -2,6 +2,7 @@ import { Fragment, useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { useLeaderboard } from '../hooks/useMatches'
 import { getPredictionSummary, getPredictionTypeIcon } from '../lib/scoring'
+import { getMatchDisplayDay, formatMatchDayHeader } from '../lib/formatters'
 
 function rankClass(index) {
   if (index === 0) return 'gold'
@@ -91,17 +92,30 @@ export default function Leaderboard() {
                     <div className="empty">Нет прогнозов с очками</div>
                   ) : (
                     <div className="user-scored-predictions">
-                      {userPredictions.map((p) => (
-                        <div key={p.id} className="scored-prediction-item">
-                          <span className="sp-match">
-                            {p.matches.home_team} {p.matches.home_score}:{p.matches.away_score} {p.matches.away_team}
-                          </span>
-                          <span className="sp-prediction">
-                            {getPredictionTypeIcon(p)} {getPredictionSummary(p)}
-                          </span>
-                          <span className="sp-points">+{p.points_earned}</span>
-                        </div>
-                      ))}
+                      {(() => {
+                        const grouped = userPredictions.reduce((acc, p) => {
+                          const day = getMatchDisplayDay(p.matches.match_date)
+                          if (!acc[day]) acc[day] = []
+                          acc[day].push(p)
+                          return acc
+                        }, {})
+                        return Object.entries(grouped).map(([day, preds]) => (
+                          <Fragment key={day}>
+                            <div className="day-group-header">{formatMatchDayHeader(day)}</div>
+                            {preds.map(p => (
+                              <div key={p.id} className="scored-prediction-item">
+                                <span className="sp-match">
+                                  {p.matches.home_team} {p.matches.home_score}:{p.matches.away_score} {p.matches.away_team}
+                                </span>
+                                <span className="sp-prediction">
+                                  {getPredictionTypeIcon(p)} {getPredictionSummary(p)}
+                                </span>
+                                <span className="sp-points">+{p.points_earned}</span>
+                              </div>
+                            ))}
+                          </Fragment>
+                        ))
+                      })()}
                     </div>
                   )}
                 </td>

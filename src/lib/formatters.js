@@ -24,6 +24,42 @@ export function formatLocalDateShort(dateStr, timezone) {
   return fmt(dateStr, { day: 'numeric', month: 'short', timeZone: timezone })
 }
 
+export function getMatchDisplayDay(dateStr) {
+  const MSK = 'Europe/Moscow'
+  const date = new Date(dateStr)
+
+  const parts = new Intl.DateTimeFormat('ru-RU', {
+    timeZone: MSK,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    hour12: false,
+  }).formatToParts(date)
+
+  let y = parts.find(p => p.type === 'year').value
+  let m = parts.find(p => p.type === 'month').value
+  let d = parts.find(p => p.type === 'day').value
+
+  if (Number(parts.find(p => p.type === 'hour').value) < 8) {
+    const prev = new Date(y, m - 1, d - 1)
+    y = String(prev.getFullYear()).padStart(4, '0')
+    m = String(prev.getMonth() + 1).padStart(2, '0')
+    d = String(prev.getDate()).padStart(2, '0')
+  }
+
+  return `${y}-${m}-${d}`
+}
+
+export function formatMatchDayHeader(dayStr) {
+  const [y, m, d] = dayStr.split('-').map(Number)
+  return new Date(y, m - 1, d, 12).toLocaleString('ru-RU', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+  })
+}
+
 export function isInMoscowNightWindow(dateStr) {
   const MSK = 'Europe/Moscow'
   const now = new Date()
