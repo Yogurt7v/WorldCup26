@@ -310,6 +310,30 @@ a:hover {
     scroll-margin-top: 0;
 }
 
+.match-list-sync-error {
+    text-align: center;
+    padding: 0.6rem 1rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.match-list-error {
+    text-align: center;
+    padding: 2rem;
+}
+
+.match-list-error-text {
+    color: var(--danger);
+    margin-bottom: 1rem;
+}
+
+.match-list-empty {
+    text-align: center;
+    color: var(--text-secondary);
+    padding: 2rem;
+}
+
 .match-card {
     display: flex;
     flex-direction: column;
