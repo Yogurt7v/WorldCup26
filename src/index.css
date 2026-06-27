@@ -307,7 +307,7 @@ a:hover {
 }
 
 [id^="match-"] {
-    scroll-margin-top: -120px;
+    scroll-margin-top: 0;
 }
 
 .match-card {
