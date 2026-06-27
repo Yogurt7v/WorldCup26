@@ -23,16 +23,28 @@ export default function MatchList({
     if (!loading && matches.length > 0 && !hasScrolled.current) {
       const target = matches.find((m) => m.status !== "FINISHED");
       if (target) {
+        hasScrolled.current = true;
+
         requestAnimationFrame(() => {
-          const el = document.getElementById(`match-${target.id}`);
-          if (el) {
-            const header = document.querySelector(".layout-header");
-            const offset = header ? header.offsetHeight + 8 : 80;
-            const top =
-              el.getBoundingClientRect().top + window.scrollY - offset;
-            window.scrollTo({ top, behavior: "smooth" });
-            hasScrolled.current = true;
-          }
+          requestAnimationFrame(() => {
+            setTimeout(() => {
+              const el = document.getElementById(`match-${target.id}`);
+              if (el) {
+                const rect = el.getBoundingClientRect();
+
+                // Проверяем, виден ли элемент уже в viewport
+                const isVisible =
+                  rect.top >= 0 && rect.top <= window.innerHeight;
+
+                if (!isVisible) {
+                  const header = document.querySelector(".layout-header");
+                  const offset = header ? header.offsetHeight + 8 : 80;
+                  const top = rect.top + window.scrollY - offset;
+                  window.scrollTo({ top, behavior: "smooth" });
+                }
+              }
+            }, 100);
+          });
         });
       }
     }
