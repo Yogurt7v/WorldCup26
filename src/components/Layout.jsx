@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { useMatchesContext } from "../lib/MatchesContext";
@@ -6,8 +7,13 @@ export default function Layout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const { syncing, refresh } = useMatchesContext();
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   const handleLogout = () => {
+    setShowLogoutConfirm(true);
+  };
+
+  const confirmLogout = () => {
     logout();
     navigate("/login");
   };
@@ -34,13 +40,14 @@ export default function Layout() {
             <NavLink to="/" end>
               Матчи
             </NavLink>
+            <NavLink to="/groups">Группы</NavLink>
             <NavLink to="/leaderboard">Таблица</NavLink>
             <button
               onClick={handleLogout}
-              className="btn-outline"
-              style={{ padding: "0.3rem 0.6rem", fontSize: "0.8rem" }}
+              className="btn-outline btn-logout"
+              title="Выйти"
             >
-              Выйти
+              ✕
             </button>
           </div>
         </div>
@@ -50,6 +57,22 @@ export default function Layout() {
           <Outlet />
         </div>
       </main>
+
+      {showLogoutConfirm && (
+        <div className="modal-overlay" onClick={() => setShowLogoutConfirm(false)}>
+          <div className="modal" onClick={e => e.stopPropagation()}>
+            <p className="modal-text">Вы уверены, что хотите выйти?</p>
+            <div className="modal-actions">
+              <button className="btn btn-outline" onClick={() => setShowLogoutConfirm(false)}>
+                Отмена
+              </button>
+              <button className="btn btn-primary" onClick={confirmLogout}>
+                Выйти
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

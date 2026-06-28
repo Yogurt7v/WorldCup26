@@ -6,6 +6,7 @@ import Home from './pages/Home'
 import MatchDetails from './pages/MatchDetails'
 import LeaderboardPage from './pages/LeaderboardPage'
 import ResultsPage from './pages/ResultsPage'
+import GroupsPage from './pages/GroupsPage'
 
 function ProtectedRoute({ children }) {
   const { isAuthenticated, loading } = useAuth()
@@ -35,6 +36,7 @@ export default function App() {
         <Route index element={<Home />} />
         <Route path="match/:id" element={<MatchDetails />} />
         <Route path="leaderboard" element={<LeaderboardPage />} />
+        <Route path="groups" element={<GroupsPage />} />
         <Route path="results" element={<ResultsPage />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />

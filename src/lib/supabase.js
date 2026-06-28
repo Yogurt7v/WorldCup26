@@ -24,7 +24,7 @@ function createTimeoutFetch(timeoutMs = 30000) {
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   global: {
-    fetch: createTimeoutFetch(30000),
+    fetch: createTimeoutFetch(60000),
   },
   realtime: {
     url: 'wss://whobwjaymbhychlbgfom.supabase.co/realtime/v1',

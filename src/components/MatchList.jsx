@@ -1,5 +1,6 @@
 import { useMatchesContext } from "../lib/MatchesContext"
 import { useScrollToUpcomingMatch } from "../hooks/useScrollToUpcomingMatch"
+import { STAGE_ORDER, STAGE_LABELS } from "../lib/stages"
 import MatchCard from "./MatchCard"
 
 export default function MatchList({
@@ -18,6 +19,12 @@ export default function MatchList({
     for (const p of predictions) {
       predictionMap[p.match_id] = p
     }
+  }
+
+  const grouped = {}
+  for (const m of matches) {
+    const key = m.stage || 'group'
+    ;(grouped[key] ??= []).push(m)
   }
 
   return (
@@ -50,11 +57,20 @@ export default function MatchList({
             : 'Нет доступных матчей. Нажмите "Обновить" для синхронизации.'}
         </div>
       ) : (
-        matches.map((match) => (
-          <div key={match.id} id={`match-${match.id}`}>
-            <MatchCard match={match} userPrediction={predictionMap[match.id]} />
-          </div>
-        ))
+        STAGE_ORDER.map((stage) => {
+          const stageMatches = grouped[stage]
+          if (!stageMatches) return null
+          return (
+            <div key={stage} className="match-list-section">
+              <h3 className="match-list-section-header">{STAGE_LABELS[stage]}</h3>
+              {stageMatches.map((match) => (
+                <div key={match.id} id={`match-${match.id}`}>
+                  <MatchCard match={match} userPrediction={predictionMap[match.id]} />
+                </div>
+              ))}
+            </div>
+          )
+        })
       )}
     </div>
   )
