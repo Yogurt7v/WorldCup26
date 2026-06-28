@@ -60,6 +60,15 @@ export function formatMatchDayHeader(dayStr) {
   })
 }
 
+export function formatCacheTime(isoStr) {
+  if (!isoStr) return ''
+  const date = new Date(isoStr)
+  const now = new Date()
+  const isToday = date.toDateString() === now.toDateString()
+  if (isToday) return formatTime(isoStr)
+  return `${formatDateShort(isoStr)}, ${formatTime(isoStr)}`
+}
+
 export function isInMoscowNightWindow(dateStr) {
   const MSK = 'Europe/Moscow'
   const now = new Date()

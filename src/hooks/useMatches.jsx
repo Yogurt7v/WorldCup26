@@ -295,13 +295,40 @@ export function usePredictions(matchId) {
   return { predictions, loading, error }
 }
 
+const LEADERBOARD_CACHE_KEY = 'leaderboard-cache'
+
+function loadLeaderboardCache() {
+  try {
+    const raw = localStorage.getItem(LEADERBOARD_CACHE_KEY)
+    if (!raw) return null
+    const parsed = JSON.parse(raw)
+    if (!parsed || !parsed.data || !parsed.timestamp) return null
+    return parsed
+  } catch { return null }
+}
+
+function saveLeaderboardCache(data) {
+  try {
+    localStorage.setItem(LEADERBOARD_CACHE_KEY, JSON.stringify({ data, timestamp: new Date().toISOString() }))
+  } catch { /* ignore */ }
+}
+
 export function useLeaderboard() {
   const [leaderboard, setLeaderboard] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [leaderboardTime, setLeaderboardTime] = useState(null)
 
   useEffect(() => {
-    setLoading(true)
+    const cached = loadLeaderboardCache()
+    if (cached) {
+      setLeaderboard(cached.data)
+      setLeaderboardTime(cached.timestamp)
+      setLoading(false)
+    } else {
+      setLoading(true)
+    }
+
     setError(null)
 
     supabase
@@ -309,9 +336,12 @@ export function useLeaderboard() {
       .select('*')
       .then(({ data, error: fetchError }) => {
         if (fetchError) {
-          setError(fetchError.message)
+          if (!cached) setError(fetchError.message)
         } else if (data) {
           setLeaderboard(data)
+          const now = new Date().toISOString()
+          setLeaderboardTime(now)
+          saveLeaderboardCache(data)
         }
         setLoading(false)
       })
@@ -326,7 +356,12 @@ export function useLeaderboard() {
             .from('leaderboard')
             .select('*')
             .then(({ data }) => {
-              if (data) setLeaderboard(data)
+              if (data) {
+                setLeaderboard(data)
+                const now = new Date().toISOString()
+                setLeaderboardTime(now)
+                saveLeaderboardCache(data)
+              }
             })
         }
       )
@@ -337,5 +372,5 @@ export function useLeaderboard() {
     }
   }, [])
 
-  return { leaderboard, loading, error }
+  return { leaderboard, loading, error, leaderboardTime }
 }

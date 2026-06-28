@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { AuthProvider } from './hooks/useAuth'
 import { MatchesProvider } from './lib/MatchesContext'
 import App from './App'
+import UpdatePrompt from './components/UpdatePrompt'
 import './index.css'
 
 createRoot(document.getElementById('root')).render(
@@ -12,6 +13,7 @@ createRoot(document.getElementById('root')).render(
       <AuthProvider>
         <MatchesProvider>
           <App />
+          <UpdatePrompt />
         </MatchesProvider>
       </AuthProvider>
     </BrowserRouter>
