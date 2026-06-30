@@ -1,70 +1,93 @@
-import { useState } from 'react'
-import { getFlagForTeam } from '../lib/flags'
+import { useState } from "react";
+import { getFlagForTeam } from "../lib/flags";
 
-const STAGE_ORDER = ['r32', 'r16', 'qf', 'sf', 'final', 'third']
+const STAGE_ORDER = ["r32", "r16", "qf", "sf", "final", "third"];
 const STAGE_LABELS = {
-  r32: '1/32 финала',
-  r16: '1/8 финала',
-  qf: '1/4 финала',
-  sf: '1/2 финала',
-  final: 'Финал',
-  third: '3-е место',
+  r32: "1/16 финала",
+  r16: "1/8 финала",
+  qf: "1/4 финала",
+  sf: "1/2 финала",
+  final: "Финал",
+  third: "3-е место",
+};
+
+function getWinner(match) {
+  if (match.home_score == null || match.away_score == null) return null;
+  if (match.home_penalty_score != null && match.away_penalty_score != null) {
+    return match.home_penalty_score > match.away_penalty_score ? "home" : "away";
+  }
+  if (match.home_score > match.away_score) return "home";
+  if (match.away_score > match.home_score) return "away";
+  return null;
 }
 
-function TeamBlock({ name, label, isTbd }) {
+function formatBracketScore(match) {
+  if (match.home_score == null || match.away_score == null) return "–";
+  const score = `${match.home_score}:${match.away_score}`;
+  if (match.home_penalty_score != null && match.away_penalty_score != null) {
+    return `${score} (${match.home_penalty_score}-${match.away_penalty_score})`;
+  }
+  return score;
+}
+
+function TeamBlock({ name, label, isTbd, winner }) {
   if (isTbd || !name) {
     return (
       <div className="b-match-team tbd">
         <span className="b-match-label">{label}</span>
       </div>
-    )
+    );
   }
   return (
-    <div className="b-match-team">
+    <div className={`b-match-team${winner ? " winner" : ""}`}>
       <span className="b-match-flag">{getFlagForTeam(name)}</span>
       <span className="b-match-name">{name}</span>
     </div>
-  )
+  );
 }
 
 function MatchCard({ match }) {
-  const homeTbd = !match.home_team
-  const awayTbd = !match.away_team
-  const hasScore = match.home_score !== null && match.away_score !== null
+  const homeTbd = !match.home_team;
+  const awayTbd = !match.away_team;
+  const winner = getWinner(match);
 
   return (
-    <div className={`b-match${homeTbd && awayTbd ? ' tbd' : ''}`}>
-      <TeamBlock name={match.home_team} label={match.label} isTbd={homeTbd} />
-      <div className="b-match-score">{hasScore ? `${match.home_score}:${match.away_score}` : '–'}</div>
-      <TeamBlock name={match.away_team} label={match.label} isTbd={awayTbd} />
+    <div className={`b-match${homeTbd && awayTbd ? " tbd" : ""}`}>
+      <TeamBlock name={match.home_team} label={match.label} isTbd={homeTbd} winner={winner === "home"} />
+      <div className="b-match-score">
+        {formatBracketScore(match)}
+      </div>
+      <TeamBlock name={match.away_team} label={match.label} isTbd={awayTbd} winner={winner === "away"} />
     </div>
-  )
+  );
 }
 
 export default function KnockoutBracket({ columns }) {
-  const [collapsed, setCollapsed] = useState({})
+  const [collapsed, setCollapsed] = useState({});
 
-  if (!columns || columns.length === 0) return null
+  if (!columns || columns.length === 0) return null;
 
-  const colMap = {}
-  columns.forEach(col => { colMap[col.stage] = col })
+  const colMap = {};
+  columns.forEach((col) => {
+    colMap[col.stage] = col;
+  });
 
   function toggle(stage) {
-    setCollapsed(prev => ({ ...prev, [stage]: !prev[stage] }))
+    setCollapsed((prev) => ({ ...prev, [stage]: !prev[stage] }));
   }
 
   return (
     <div className="bracket-scroll">
       <div className="bracket-grid">
-        {STAGE_ORDER.map(stage => {
-          const col = colMap[stage]
-          if (!col) return null
-          const isCol = !!collapsed[stage]
+        {STAGE_ORDER.map((stage) => {
+          const col = colMap[stage];
+          if (!col) return null;
+          const isCol = !!collapsed[stage];
 
           return (
-            <div key={stage} className={`b-col${isCol ? ' collapsed' : ''}`}>
+            <div key={stage} className={`b-col${isCol ? " collapsed" : ""}`}>
               <div className="b-col-header" onClick={() => toggle(stage)}>
-                <span className="b-col-toggle">{isCol ? '▶' : '▼'}</span>
+                <span className="b-col-toggle">{isCol ? "▶" : "▼"}</span>
                 <span className="b-col-label">{STAGE_LABELS[stage]}</span>
               </div>
               <div className="b-col-body">
@@ -73,9 +96,9 @@ export default function KnockoutBracket({ columns }) {
                 ))}
               </div>
             </div>
-          )
+          );
         })}
       </div>
     </div>
-  )
+  );
 }

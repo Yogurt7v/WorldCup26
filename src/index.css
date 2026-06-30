@@ -199,7 +199,7 @@ a:hover {
 }
 
 .spinner::before {
-    content: '';
+    content: "";
     width: 1.2rem;
     height: 1.2rem;
     border: 2px solid var(--border);
@@ -707,8 +707,19 @@ a:hover {
     letter-spacing: -0.02em;
 }
 
-.match-card .score .score-dash {
+.match-card .score {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1.15;
+    gap: 0.05rem;
+}
+
+.match-card .score .match-score-penalty {
+    font-size: 0.8rem;
     color: var(--text-secondary);
+    font-weight: 600;
+    line-height: 1;
 }
 
 .match-card .score .score-none {
@@ -793,11 +804,21 @@ a:hover {
 .match-details .match-hero .score-display {
     font-size: 2rem;
     font-weight: 700;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.15rem;
 }
 
-.match-details .match-hero .score-display .score-dash {
-    margin: 0 0.5rem;
+.match-details .match-hero .score-display .main-score {
+    line-height: 1;
+}
+
+.match-details .match-hero .score-display .penalty-score {
+    font-size: 1.2rem;
+    font-weight: 600;
     color: var(--text-secondary);
+    line-height: 1;
 }
 
 .section-title {
@@ -1747,6 +1768,14 @@ a:hover {
 .b-match-team.tbd {
     justify-content: center;
     padding: 0.35rem 0;
+}
+
+.b-match-team.winner .b-match-name {
+    font-weight: 700;
+}
+
+.b-match-team.winner .b-match-flag {
+    filter: drop-shadow(0 0 2px rgba(255, 215, 0, 0.5));
 }
 
 .b-match-flag {
