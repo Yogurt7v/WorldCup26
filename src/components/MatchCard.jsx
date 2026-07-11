@@ -21,7 +21,7 @@ function MatchCard({ match, userPrediction }) {
 
   return (
     <div
-      className={`match-card card${isFinished ? " finished" : ""}${isUpcomingNight ? " upcoming" : ""}`}
+      className={`match-card card${isFinished ? " finished" : ""}${isUpcomingNight ? " upcoming" : ""}${match.stage === "third" ? " stage-third" : ""}${match.stage === "final" ? " stage-final" : ""}`}
       onClick={() => navigate(`/match/${match.id}`)}
     >
       <div className="match-header">

@@ -21,14 +21,14 @@ function saveCache(userId, data) {
 export default function Home() {
   const { user } = useAuth()
   const { matches, loading, error, syncError } = useMatchesContext()
-  const [predictions, setPredictions] = useState([])
+  const [predictions, setPredictions] = useState(() => {
+    if (!user) return []
+    return loadCached(user.id) || []
+  })
   const [champData, setChampData] = useState(null)
 
   useEffect(() => {
     if (!user) return
-
-    const cached = loadCached(user.id)
-    if (cached) setPredictions(cached)
 
     supabase
       .from('predictions')

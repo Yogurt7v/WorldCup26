@@ -85,7 +85,7 @@ export default function KnockoutBracket({ columns }) {
           const isCol = !!collapsed[stage];
 
           return (
-            <div key={stage} className={`b-col${isCol ? " collapsed" : ""}`}>
+            <div key={stage} className={`b-col${isCol ? " collapsed" : ""}${stage === "third" ? " b-col-third" : ""}${stage === "final" ? " b-col-final" : ""}`}>
               <div className="b-col-header" onClick={() => toggle(stage)}>
                 <span className="b-col-toggle">{isCol ? "▶" : "▼"}</span>
                 <span className="b-col-label">{STAGE_LABELS[stage]}</span>

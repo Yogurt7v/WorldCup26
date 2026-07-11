@@ -365,6 +365,7 @@ a:hover {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
+    margin-bottom: 1rem;
 }
 
 .match-list-header {
@@ -504,6 +505,10 @@ a:hover {
     margin-top: 0;
 }
 
+.match-list-section:last-child {
+    padding-bottom: 2rem;
+}
+
 .match-list-section-header {
     font-size: 1.1rem;
     font-weight: 700;
@@ -596,6 +601,93 @@ a:hover {
     box-shadow:
         0 1px 4px rgba(0, 0, 0, 0.06),
         0 2px 16px rgba(0, 0, 0, 0.08);
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+@keyframes glow-pulse-third {
+    0%,
+    100% {
+        box-shadow:
+            0 0 12px rgba(196, 90, 44, 0.1),
+            inset 0 0 12px rgba(196, 90, 44, 0.03);
+    }
+    50% {
+        box-shadow:
+            0 0 22px rgba(196, 90, 44, 0.25),
+            inset 0 0 18px rgba(196, 90, 44, 0.06);
+    }
+}
+
+@keyframes glow-pulse-final {
+    0%,
+    100% {
+        box-shadow:
+            0 0 12px rgba(234, 179, 8, 0.1),
+            inset 0 0 12px rgba(234, 179, 8, 0.03);
+    }
+    50% {
+        box-shadow:
+            0 0 22px rgba(234, 179, 8, 0.25),
+            inset 0 0 18px rgba(234, 179, 8, 0.06);
+    }
+}
+
+.match-card.stage-third {
+    position: relative;
+    overflow: hidden;
+    background: rgba(196, 90, 44, 0.06);
+    animation: glow-pulse-third 3s ease-in-out infinite;
+}
+
+.match-card.stage-third::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        120deg,
+        transparent 25%,
+        rgba(196, 90, 44, 0.15) 50%,
+        transparent 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 4s ease-in-out infinite;
+    pointer-events: none;
+}
+
+.match-card.stage-final {
+    position: relative;
+    overflow: hidden;
+    background: rgba(234, 179, 8, 0.06);
+    animation: glow-pulse-final 3s ease-in-out infinite;
+}
+
+.match-card.stage-final::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        120deg,
+        transparent 25%,
+        rgba(234, 179, 8, 0.15) 50%,
+        transparent 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 4s ease-in-out infinite;
+    pointer-events: none;
 }
 
 .match-card .match-header {
@@ -1310,13 +1402,13 @@ a:hover {
 }
 
 .leaderboard-table .rank.gold {
-    color: #ca8a04;
+    color: #eab308;
 }
 .leaderboard-table .rank.silver {
     color: #94a3b8;
 }
 .leaderboard-table .rank.bronze {
-    color: #cd7f32;
+    color: #c45a2c;
 }
 
 .leaderboard-table .name {
@@ -1806,6 +1898,26 @@ a:hover {
     border-bottom: 1px solid var(--border);
     padding: 0.12rem 0;
     margin: 0.12rem 0;
+}
+
+.b-col-third .b-col-header {
+    border-color: #c45a2c;
+    color: #c45a2c;
+}
+
+.b-col-third .b-match {
+    background: rgba(196, 90, 44, 0.04);
+    border-color: rgba(196, 90, 44, 0.25);
+}
+
+.b-col-final .b-col-header {
+    border-color: #eab308;
+    color: #eab308;
+}
+
+.b-col-final .b-match {
+    background: rgba(234, 179, 8, 0.04);
+    border-color: rgba(234, 179, 8, 0.25);
 }
 
 @media (max-width: 600px) {

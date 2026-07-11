@@ -102,21 +102,13 @@ export function useMatches() {
         if (fetchError) throw fetchError
 
         if (!cancelled) {
-          if (!data || data.length === 0) {
-            await doSync()
-            const { data: refetched } = await supabase
-              .from('matches')
-              .select('*')
-              .order('match_date', { ascending: true })
-            if (!cancelled && refetched) {
-              setMatches(refetched)
-              saveCache(refetched)
-            }
-          } else {
+          if (data && data.length > 0) {
             setMatches(data)
             saveCache(data)
           }
           setLoading(false)
+
+          await doSync()
           if (!cancelled) scheduleSync()
         }
       } catch (err) {
