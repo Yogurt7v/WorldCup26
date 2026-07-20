@@ -1,12 +1,10 @@
 import { useState } from "react";
 import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import { useMatchesContext } from "../lib/MatchesContext";
 
 export default function Layout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const { syncing, refresh } = useMatchesContext();
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   const handleLogout = () => {
@@ -26,14 +24,6 @@ export default function Layout() {
             <NavLink to="/" className="logo">
               <img src="/icons/96x96.png" alt="" className="logo-icon" />
             </NavLink>
-            <button
-              className={`btn-refresh${syncing ? " spinning" : ""}`}
-              onClick={refresh}
-              disabled={syncing}
-              title="Обновить данные"
-            >
-              ↻
-            </button>
           </div>
           <div className="nav">
             <span className="username">👤 {user?.username}</span>

@@ -1,7 +1,9 @@
-import { useState, useEffect } from "react";
+import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import { supabase } from "../lib/supabase";
+import predictionsData from "../data/predictions.json";
+import matchesData from "../data/matches.json";
+import leaderboardData from "../data/leaderboard.json";
 import { useConfetti } from "../hooks/useConfetti";
 
 function calculateStats(predictions) {
@@ -92,85 +94,35 @@ function barColor(pct) {
 export default function ResultsPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [data, setData] = useState(null);
-  const [gate, setGate] = useState("loading");
 
-  useEffect(() => {
-    if (!user) return;
+  const data = useMemo(() => {
+    if (!user) return null;
 
-    let cancelled = false;
+    const userPredictions = predictionsData
+      .filter((p) => p.user_id === user.id)
+      .map((p) => ({
+        ...p,
+        matches: matchesData.find((m) => m.id === p.match_id) || null,
+      }))
+      .filter((p) => p.matches && p.matches.status === "FINISHED");
 
-    async function init() {
-      const { data: notFinished } = await supabase
-        .from("matches")
-        .select("id")
-        .neq("status", "FINISHED")
-        .limit(1);
+    const leaderboard = [...leaderboardData].sort(
+      (a, b) => b.total_points - a.total_points
+    );
+    const rank = leaderboard.findIndex((u) => u.id === user.id) + 1;
+    const totalPlayers = leaderboard.length;
+    const myRow = leaderboard.find((u) => u.id === user.id);
+    const stats = calculateStats(userPredictions);
 
-      if (notFinished && notFinished.length > 0) {
-        if (!cancelled) setGate("not_finished");
-        return;
-      }
-
-      const [predictionsRes, leaderboardRes] = await Promise.all([
-        supabase
-          .from("predictions")
-          .select("*, matches!inner(*)")
-          .eq("user_id", user.id)
-          .eq("matches.status", "FINISHED"),
-        supabase
-          .from("leaderboard")
-          .select("*")
-          .order("total_points", { ascending: false }),
-      ]);
-
-      if (cancelled) return;
-
-      const leaderboard = leaderboardRes.data || [];
-      const rank = leaderboard.findIndex((u) => u.id === user.id) + 1;
-      const totalPlayers = leaderboard.length;
-      const myRow = leaderboard.find((u) => u.id === user.id);
-      const stats = calculateStats(predictionsRes.data || []);
-
-      setData({
-        rank,
-        totalPlayers,
-        totalPoints: myRow?.total_points || 0,
-        stats,
-        predictions: predictionsRes.data || [],
-      });
-      setGate("ready");
-    }
-
-    init();
-
-    return () => {
-      cancelled = true;
+    return {
+      rank,
+      totalPlayers,
+      totalPoints: myRow?.total_points || 0,
+      stats,
     };
   }, [user]);
 
-  useConfetti(gate === "ready");
-
-  if (gate === "loading") {
-    return <div className="spinner">Загрузка...</div>;
-  }
-
-  if (gate === "not_finished") {
-    return (
-      <div className="card" style={{ textAlign: "center", padding: "2rem" }}>
-        <div style={{ fontSize: "2rem", marginBottom: "1rem" }}>🏆 </div>
-        <p style={{ fontSize: "1.2rem", marginBottom: "1rem" }}>
-          Чемпионат ещё не завершён!
-        </p>
-        <p style={{ color: "var(--text-secondary)", marginBottom: "1.5rem" }}>
-          Возвращайтесь после окончания всех матчей, чтобы увидеть результаты.
-        </p>
-        <button onClick={() => navigate("/")} className="btn btn-primary">
-          На главную
-        </button>
-      </div>
-    );
-  }
+  useConfetti(!!data);
 
   if (!data) return null;
 

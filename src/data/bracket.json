@@ -444,26 +444,6 @@
     ]
   },
   {
-    "stage": "third",
-    "label": "Third Place",
-    "matches": [
-      {
-        "id": 103,
-        "label": "M103",
-        "home_team": "France",
-        "away_team": "England",
-        "home_score": 4,
-        "away_score": 6,
-        "home_penalty_score": null,
-        "away_penalty_score": null,
-        "status": "completed",
-        "match_date": "2026-07-18T17:00:00Z",
-        "row": null,
-        "span": null
-      }
-    ]
-  },
-  {
     "stage": "final",
     "label": "Final",
     "matches": [
@@ -478,6 +458,26 @@
         "away_penalty_score": null,
         "status": "completed",
         "match_date": "2026-07-19T15:00:00Z",
+        "row": null,
+        "span": null
+      }
+    ]
+  },
+  {
+    "stage": "third",
+    "label": "Third Place",
+    "matches": [
+      {
+        "id": 103,
+        "label": "M103",
+        "home_team": "France",
+        "away_team": "England",
+        "home_score": 4,
+        "away_score": 6,
+        "home_penalty_score": null,
+        "away_penalty_score": null,
+        "status": "completed",
+        "match_date": "2026-07-18T17:00:00Z",
         "row": null,
         "span": null
       }

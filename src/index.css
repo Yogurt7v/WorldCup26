@@ -112,6 +112,8 @@ a:hover {
 .btn-primary {
     background: var(--accent);
     color: #fff;
+    padding: 10px 20px;
+    border-radius: 10px;
 }
 
 .btn-primary:hover:not(:disabled) {
@@ -589,9 +591,9 @@ a:hover {
         0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.match-card.finished {
+/*.match-card.finished {
     opacity: 0.35;
-}
+}*/
 
 .match-card.upcoming {
     border: 2px solid #007aff;

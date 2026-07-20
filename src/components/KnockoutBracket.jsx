@@ -1,7 +1,7 @@
-import { useState } from "react";
 import { getFlagForTeam } from "../lib/flags";
+import { translateTeamName } from "../lib/teamNames";
 
-const STAGE_ORDER = ["r32", "r16", "qf", "sf", "final", "third"];
+const STAGE_ORDER = ["r32", "r16", "qf", "sf",  "third", "final",];
 const STAGE_LABELS = {
   r32: "1/16 финала",
   r16: "1/8 финала",
@@ -41,7 +41,7 @@ function TeamBlock({ name, label, isTbd, winner }) {
   return (
     <div className={`b-match-team${winner ? " winner" : ""}`}>
       <span className="b-match-flag">{getFlagForTeam(name)}</span>
-      <span className="b-match-name">{name}</span>
+      <span className="b-match-name">{translateTeamName(name)}</span>
     </div>
   );
 }
@@ -63,7 +63,6 @@ function MatchCard({ match }) {
 }
 
 export default function KnockoutBracket({ columns }) {
-  const [collapsed, setCollapsed] = useState({});
 
   if (!columns || columns.length === 0) return null;
 
@@ -72,9 +71,9 @@ export default function KnockoutBracket({ columns }) {
     colMap[col.stage] = col;
   });
 
-  function toggle(stage) {
-    setCollapsed((prev) => ({ ...prev, [stage]: !prev[stage] }));
-  }
+  // function toggle(stage) {
+  //   setCollapsed((prev) => ({ ...prev, [stage]: !prev[stage] }));
+  // }
 
   return (
     <div className="bracket-scroll">
@@ -82,12 +81,10 @@ export default function KnockoutBracket({ columns }) {
         {STAGE_ORDER.map((stage) => {
           const col = colMap[stage];
           if (!col) return null;
-          const isCol = !!collapsed[stage];
 
           return (
-            <div key={stage} className={`b-col${isCol ? " collapsed" : ""}${stage === "third" ? " b-col-third" : ""}${stage === "final" ? " b-col-final" : ""}`}>
-              <div className="b-col-header" onClick={() => toggle(stage)}>
-                <span className="b-col-toggle">{isCol ? "▶" : "▼"}</span>
+            <div key={stage} className={`${stage === "third" ? " b-col-third" : ""}${stage === "final" ? " b-col-final" : ""}`}>
+              <div className="b-col-header">
                 <span className="b-col-label">{STAGE_LABELS[stage]}</span>
               </div>
               <div className="b-col-body">

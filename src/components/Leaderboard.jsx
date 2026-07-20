@@ -1,11 +1,11 @@
-import { Fragment, useState, useEffect } from "react";
-import { supabase } from "../lib/supabase";
+import { Fragment, useState, useMemo } from "react";
 import { useLeaderboard } from "../hooks/useMatches";
+import predictionsData from "../data/predictions.json";
+import matchesData from "../data/matches.json";
 import { getPredictionSummary, getPredictionTypeIcon } from "../lib/scoring";
 import {
   getMatchDisplayDay,
   formatMatchDayHeader,
-  formatCacheTime,
 } from "../lib/formatters";
 
 function rankClass(index) {
@@ -16,36 +16,26 @@ function rankClass(index) {
 }
 
 export default function Leaderboard() {
-  const { leaderboard, loading, error, leaderboardTime } = useLeaderboard();
+  const { leaderboard, loading, error } = useLeaderboard();
   const [expandedUserId, setExpandedUserId] = useState(null);
-  const [userPredictions, setUserPredictions] = useState([]);
-  const [predictionsLoading, setPredictionsLoading] = useState(false);
 
-  useEffect(() => {
-    if (!expandedUserId) {
-      setUserPredictions([]);
-      return;
-    }
+  const userPredictions = useMemo(() => {
+    if (!expandedUserId) return [];
 
-    setPredictionsLoading(true);
-    supabase
-      .from("predictions")
-      .select(
-        "*, matches!inner(home_team, away_team, home_score, away_score, match_date)",
-      )
-      .eq("user_id", expandedUserId)
-      .gt("points_earned", 0)
-      .then(({ data }) => {
-        if (data) {
-          data.sort(
-            (a, b) =>
-              new Date(b.matches.match_date) - new Date(a.matches.match_date),
-          );
-          setUserPredictions(data);
-        }
-        setPredictionsLoading(false);
-      });
+    return predictionsData
+      .filter((p) => p.user_id === expandedUserId && p.points_earned > 0)
+      .map((p) => ({
+        ...p,
+        matches: matchesData.find((m) => m.id === p.match_id) || null,
+      }))
+      .filter((p) => p.matches)
+      .sort(
+        (a, b) =>
+          new Date(b.matches.match_date) - new Date(a.matches.match_date),
+      );
   }, [expandedUserId]);
+
+  const predictionsLoading = false;
 
   const handleToggle = (userId) => {
     setExpandedUserId(expandedUserId === userId ? null : userId);
@@ -155,11 +145,6 @@ export default function Leaderboard() {
           ))}
         </tbody>
       </table>
-      {leaderboardTime && (
-        <div className="cache-timestamp">
-          Данные от {formatCacheTime(leaderboardTime)}
-        </div>
-      )}
     </>
   );
 }

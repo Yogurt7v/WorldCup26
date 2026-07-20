@@ -1,4 +1,5 @@
 import { getFlagForTeam } from '../lib/flags'
+import { translateTeamName } from '../lib/teamNames'
 
 export default function GroupStandings({ groups }) {
   if (!groups || groups.length === 0) return null
@@ -27,7 +28,7 @@ export default function GroupStandings({ groups }) {
                   <td className="col-pos">{i + 1}</td>
                   <td className="col-team">
                     <span className="team-flag">{getFlagForTeam(t.name)}</span>
-                    <span className="team-name">{t.name}</span>
+                    <span className="team-name">{translateTeamName(t.name)}</span>
                   </td>
                   <td className="col-num">{t.mp}</td>
                   <td className="col-num col-ext">{t.w}</td>
