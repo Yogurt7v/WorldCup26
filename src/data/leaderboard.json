@@ -1,0 +1,29 @@
+[
+  {
+    "id": "5ab13229-92f5-4301-88e6-62a77ffc6d23",
+    "username": "Сергей",
+    "total_points": 256,
+    "total_predictions": 104,
+    "exact_scores": 13,
+    "correct_outcomes": 65,
+    "scored_predictions": 65
+  },
+  {
+    "id": "809ce39b-88af-4833-9d96-7e2807cb3573",
+    "username": "Папа",
+    "total_points": 230,
+    "total_predictions": 104,
+    "exact_scores": 3,
+    "correct_outcomes": 63,
+    "scored_predictions": 63
+  },
+  {
+    "id": "d9df7767-6424-41c3-a4af-76aecf19a73b",
+    "username": "Екатерина",
+    "total_points": 22,
+    "total_predictions": 7,
+    "exact_scores": 0,
+    "correct_outcomes": 4,
+    "scored_predictions": 4
+  }
+]

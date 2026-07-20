@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react'
-import { supabase } from '../lib/supabase'
+import usersData from '../data/users.json'
 
 const AuthContext = createContext(null)
 
@@ -21,38 +21,21 @@ export function AuthProvider({ children }) {
     setLoading(false)
   }, [])
 
-  const login = useCallback(async (username) => {
+  const login = useCallback((username) => {
     const trimmed = username.trim()
     if (trimmed.length < 3) {
       throw new Error('Логин должен быть минимум 3 символа')
     }
 
-    let { data, error } = await supabase
-      .from('users')
-      .select('id, username, created_at')
-      .eq('username', trimmed)
-      .maybeSingle()
+    const found = usersData.find(
+      (u) => u.username.toLowerCase() === trimmed.toLowerCase()
+    )
 
-    if (error) {
-      throw new Error('Ошибка при входе')
+    if (!found) {
+      throw new Error('Пользователь не найден')
     }
 
-    if (!data) {
-      const { data: newUser, error: createError } = await supabase
-        .from('users')
-        .insert({ username: trimmed })
-        .select('id, username, created_at')
-        .single()
-
-      if (createError) {
-        if (createError.code === '23505') {
-          throw new Error('Этот логин уже занят (попробуйте другой)')
-        }
-        throw new Error('Ошибка при регистрации')
-      }
-      data = newUser
-    }
-
+    const data = { id: found.id, username: found.username, created_at: found.created_at }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
     setUser(data)
     return data

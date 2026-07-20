@@ -1,0 +1,686 @@
+[
+  {
+    "name": "Group A",
+    "teams": [
+      {
+        "team_id": "1",
+        "name": "Mexico",
+        "fifa_code": "MEX",
+        "mp": 3,
+        "w": 3,
+        "l": 0,
+        "d": 0,
+        "pts": 9,
+        "gf": 6,
+        "ga": 0,
+        "gd": 6
+      },
+      {
+        "team_id": "2",
+        "name": "South Africa",
+        "fifa_code": "RSA",
+        "mp": 3,
+        "w": 1,
+        "l": 1,
+        "d": 1,
+        "pts": 4,
+        "gf": 2,
+        "ga": 3,
+        "gd": -1
+      },
+      {
+        "team_id": "3",
+        "name": "South Korea",
+        "fifa_code": "KOR",
+        "mp": 3,
+        "w": 1,
+        "l": 2,
+        "d": 0,
+        "pts": 3,
+        "gf": 2,
+        "ga": 3,
+        "gd": -1
+      },
+      {
+        "team_id": "4",
+        "name": "Czech Republic",
+        "fifa_code": "CZE",
+        "mp": 3,
+        "w": 0,
+        "l": 2,
+        "d": 1,
+        "pts": 1,
+        "gf": 2,
+        "ga": 6,
+        "gd": -4
+      }
+    ]
+  },
+  {
+    "name": "Group B",
+    "teams": [
+      {
+        "team_id": "8",
+        "name": "Switzerland",
+        "fifa_code": "SUI",
+        "mp": 3,
+        "w": 2,
+        "l": 0,
+        "d": 1,
+        "pts": 7,
+        "gf": 7,
+        "ga": 3,
+        "gd": 4
+      },
+      {
+        "team_id": "5",
+        "name": "Canada",
+        "fifa_code": "CAN",
+        "mp": 3,
+        "w": 1,
+        "l": 1,
+        "d": 1,
+        "pts": 4,
+        "gf": 8,
+        "ga": 3,
+        "gd": 5
+      },
+      {
+        "team_id": "6",
+        "name": "Bosnia and Herzegovina",
+        "fifa_code": "BIH",
+        "mp": 3,
+        "w": 1,
+        "l": 1,
+        "d": 1,
+        "pts": 4,
+        "gf": 5,
+        "ga": 6,
+        "gd": -1
+      },
+      {
+        "team_id": "7",
+        "name": "Qatar",
+        "fifa_code": "QAT",
+        "mp": 3,
+        "w": 0,
+        "l": 2,
+        "d": 1,
+        "pts": 1,
+        "gf": 2,
+        "ga": 10,
+        "gd": -8
+      }
+    ]
+  },
+  {
+    "name": "Group C",
+    "teams": [
+      {
+        "team_id": "9",
+        "name": "Brazil",
+        "fifa_code": "BRA",
+        "mp": 3,
+        "w": 2,
+        "l": 0,
+        "d": 1,
+        "pts": 7,
+        "gf": 7,
+        "ga": 1,
+        "gd": 6
+      },
+      {
+        "team_id": "10",
+        "name": "Morocco",
+        "fifa_code": "MAR",
+        "mp": 3,
+        "w": 2,
+        "l": 0,
+        "d": 1,
+        "pts": 7,
+        "gf": 6,
+        "ga": 3,
+        "gd": 3
+      },
+      {
+        "team_id": "12",
+        "name": "Scotland",
+        "fifa_code": "SCO",
+        "mp": 3,
+        "w": 1,
+        "l": 2,
+        "d": 0,
+        "pts": 3,
+        "gf": 1,
+        "ga": 4,
+        "gd": -3
+      },
+      {
+        "team_id": "11",
+        "name": "Haiti",
+        "fifa_code": "HAI",
+        "mp": 3,
+        "w": 0,
+        "l": 3,
+        "d": 0,
+        "pts": 0,
+        "gf": 2,
+        "ga": 8,
+        "gd": -6
+      }
+    ]
+  },
+  {
+    "name": "Group D",
+    "teams": [
+      {
+        "team_id": "13",
+        "name": "United States",
+        "fifa_code": "USA",
+        "mp": 3,
+        "w": 2,
+        "l": 1,
+        "d": 0,
+        "pts": 6,
+        "gf": 8,
+        "ga": 4,
+        "gd": 4
+      },
+      {
+        "team_id": "15",
+        "name": "Australia",
+        "fifa_code": "AUS",
+        "mp": 3,
+        "w": 1,
+        "l": 1,
+        "d": 1,
+        "pts": 4,
+        "gf": 2,
+        "ga": 2,
+        "gd": 0
+      },
+      {
+        "team_id": "14",
+        "name": "Paraguay",
+        "fifa_code": "PAR",
+        "mp": 3,
+        "w": 1,
+        "l": 1,
+        "d": 1,
+        "pts": 4,
+        "gf": 2,
+        "ga": 4,
+        "gd": -2
+      },
+      {
+        "team_id": "16",
+        "name": "Turkey",
+        "fifa_code": "TUR",
+        "mp": 3,
+        "w": 1,
+        "l": 2,
+        "d": 0,
+        "pts": 3,
+        "gf": 3,
+        "ga": 5,
+        "gd": -2
+      }
+    ]
+  },
+  {
+    "name": "Group E",
+    "teams": [
+      {
+        "team_id": "17",
+        "name": "Germany",
+        "fifa_code": "GER",
+        "mp": 3,
+        "w": 2,
+        "l": 1,
+        "d": 0,
+        "pts": 6,
+        "gf": 10,
+        "ga": 4,
+        "gd": 6
+      },
+      {
+        "team_id": "19",
+        "name": "Ivory Coast",
+        "fifa_code": "CIV",
+        "mp": 3,
+        "w": 2,
+        "l": 1,
+        "d": 0,
+        "pts": 6,
+        "gf": 4,
+        "ga": 2,
+        "gd": 2
+      },
+      {
+        "team_id": "20",
+        "name": "Ecuador",
+        "fifa_code": "ECU",
+        "mp": 3,
+        "w": 1,
+        "l": 1,
+        "d": 1,
+        "pts": 4,
+        "gf": 2,
+        "ga": 2,
+        "gd": 0
+      },
+      {
+        "team_id": "18",
+        "name": "Curaçao",
+        "fifa_code": "CUW",
+        "mp": 3,
+        "w": 0,
+        "l": 2,
+        "d": 1,
+        "pts": 1,
+        "gf": 1,
+        "ga": 9,
+        "gd": -8
+      }
+    ]
+  },
+  {
+    "name": "Group F",
+    "teams": [
+      {
+        "team_id": "21",
+        "name": "Netherlands",
+        "fifa_code": "NED",
+        "mp": 3,
+        "w": 2,
+        "l": 0,
+        "d": 1,
+        "pts": 7,
+        "gf": 10,
+        "ga": 4,
+        "gd": 6
+      },
+      {
+        "team_id": "22",
+        "name": "Japan",
+        "fifa_code": "JPN",
+        "mp": 3,
+        "w": 1,
+        "l": 0,
+        "d": 2,
+        "pts": 5,
+        "gf": 7,
+        "ga": 3,
+        "gd": 4
+      },
+      {
+        "team_id": "23",
+        "name": "Sweden",
+        "fifa_code": "SWE",
+        "mp": 3,
+        "w": 1,
+        "l": 1,
+        "d": 1,
+        "pts": 4,
+        "gf": 7,
+        "ga": 7,
+        "gd": 0
+      },
+      {
+        "team_id": "24",
+        "name": "Tunisia",
+        "fifa_code": "TUN",
+        "mp": 3,
+        "w": 0,
+        "l": 3,
+        "d": 0,
+        "pts": 0,
+        "gf": 2,
+        "ga": 12,
+        "gd": -10
+      }
+    ]
+  },
+  {
+    "name": "Group G",
+    "teams": [
+      {
+        "team_id": "25",
+        "name": "Belgium",
+        "fifa_code": "BEL",
+        "mp": 3,
+        "w": 1,
+        "l": 0,
+        "d": 2,
+        "pts": 5,
+        "gf": 6,
+        "ga": 2,
+        "gd": 4
+      },
+      {
+        "team_id": "26",
+        "name": "Egypt",
+        "fifa_code": "EGY",
+        "mp": 3,
+        "w": 1,
+        "l": 0,
+        "d": 2,
+        "pts": 5,
+        "gf": 5,
+        "ga": 3,
+        "gd": 2
+      },
+      {
+        "team_id": "27",
+        "name": "Iran",
+        "fifa_code": "IRN",
+        "mp": 3,
+        "w": 0,
+        "l": 0,
+        "d": 3,
+        "pts": 3,
+        "gf": 3,
+        "ga": 3,
+        "gd": 0
+      },
+      {
+        "team_id": "28",
+        "name": "New Zealand",
+        "fifa_code": "NZL",
+        "mp": 3,
+        "w": 0,
+        "l": 2,
+        "d": 1,
+        "pts": 1,
+        "gf": 4,
+        "ga": 10,
+        "gd": -6
+      }
+    ]
+  },
+  {
+    "name": "Group H",
+    "teams": [
+      {
+        "team_id": "29",
+        "name": "Spain",
+        "fifa_code": "ESP",
+        "mp": 3,
+        "w": 2,
+        "l": 0,
+        "d": 1,
+        "pts": 7,
+        "gf": 5,
+        "ga": 0,
+        "gd": 5
+      },
+      {
+        "team_id": "30",
+        "name": "Cape Verde",
+        "fifa_code": "CPV",
+        "mp": 3,
+        "w": 0,
+        "l": 0,
+        "d": 3,
+        "pts": 3,
+        "gf": 2,
+        "ga": 2,
+        "gd": 0
+      },
+      {
+        "team_id": "32",
+        "name": "Uruguay",
+        "fifa_code": "URU",
+        "mp": 3,
+        "w": 0,
+        "l": 1,
+        "d": 2,
+        "pts": 2,
+        "gf": 3,
+        "ga": 4,
+        "gd": -1
+      },
+      {
+        "team_id": "31",
+        "name": "Saudi Arabia",
+        "fifa_code": "KSA",
+        "mp": 3,
+        "w": 0,
+        "l": 1,
+        "d": 2,
+        "pts": 2,
+        "gf": 1,
+        "ga": 5,
+        "gd": -4
+      }
+    ]
+  },
+  {
+    "name": "Group I",
+    "teams": [
+      {
+        "team_id": "33",
+        "name": "France",
+        "fifa_code": "FRA",
+        "mp": 3,
+        "w": 3,
+        "l": 0,
+        "d": 0,
+        "pts": 9,
+        "gf": 10,
+        "ga": 2,
+        "gd": 8
+      },
+      {
+        "team_id": "36",
+        "name": "Norway",
+        "fifa_code": "NOR",
+        "mp": 3,
+        "w": 2,
+        "l": 1,
+        "d": 0,
+        "pts": 6,
+        "gf": 8,
+        "ga": 7,
+        "gd": 1
+      },
+      {
+        "team_id": "34",
+        "name": "Senegal",
+        "fifa_code": "SEN",
+        "mp": 3,
+        "w": 1,
+        "l": 2,
+        "d": 0,
+        "pts": 3,
+        "gf": 8,
+        "ga": 6,
+        "gd": 2
+      },
+      {
+        "team_id": "35",
+        "name": "Iraq",
+        "fifa_code": "IRQ",
+        "mp": 3,
+        "w": 0,
+        "l": 3,
+        "d": 0,
+        "pts": 0,
+        "gf": 1,
+        "ga": 12,
+        "gd": -11
+      }
+    ]
+  },
+  {
+    "name": "Group J",
+    "teams": [
+      {
+        "team_id": "37",
+        "name": "Argentina",
+        "fifa_code": "ARG",
+        "mp": 3,
+        "w": 3,
+        "l": 0,
+        "d": 0,
+        "pts": 9,
+        "gf": 8,
+        "ga": 1,
+        "gd": 7
+      },
+      {
+        "team_id": "39",
+        "name": "Austria",
+        "fifa_code": "AUT",
+        "mp": 3,
+        "w": 1,
+        "l": 1,
+        "d": 1,
+        "pts": 4,
+        "gf": 6,
+        "ga": 6,
+        "gd": 0
+      },
+      {
+        "team_id": "38",
+        "name": "Algeria",
+        "fifa_code": "ALG",
+        "mp": 3,
+        "w": 1,
+        "l": 1,
+        "d": 1,
+        "pts": 4,
+        "gf": 5,
+        "ga": 7,
+        "gd": -2
+      },
+      {
+        "team_id": "40",
+        "name": "Jordan",
+        "fifa_code": "JOR",
+        "mp": 3,
+        "w": 0,
+        "l": 3,
+        "d": 0,
+        "pts": 0,
+        "gf": 3,
+        "ga": 8,
+        "gd": -5
+      }
+    ]
+  },
+  {
+    "name": "Group K",
+    "teams": [
+      {
+        "team_id": "44",
+        "name": "Colombia",
+        "fifa_code": "COL",
+        "mp": 3,
+        "w": 2,
+        "l": 0,
+        "d": 1,
+        "pts": 7,
+        "gf": 4,
+        "ga": 1,
+        "gd": 3
+      },
+      {
+        "team_id": "41",
+        "name": "Portugal",
+        "fifa_code": "POR",
+        "mp": 3,
+        "w": 1,
+        "l": 0,
+        "d": 2,
+        "pts": 5,
+        "gf": 6,
+        "ga": 1,
+        "gd": 5
+      },
+      {
+        "team_id": "42",
+        "name": "Democratic Republic of the Congo",
+        "fifa_code": "COD",
+        "mp": 3,
+        "w": 1,
+        "l": 1,
+        "d": 1,
+        "pts": 4,
+        "gf": 4,
+        "ga": 3,
+        "gd": 1
+      },
+      {
+        "team_id": "43",
+        "name": "Uzbekistan",
+        "fifa_code": "UZB",
+        "mp": 3,
+        "w": 0,
+        "l": 3,
+        "d": 0,
+        "pts": 0,
+        "gf": 2,
+        "ga": 11,
+        "gd": -9
+      }
+    ]
+  },
+  {
+    "name": "Group L",
+    "teams": [
+      {
+        "team_id": "45",
+        "name": "England",
+        "fifa_code": "ENG",
+        "mp": 3,
+        "w": 2,
+        "l": 0,
+        "d": 1,
+        "pts": 7,
+        "gf": 6,
+        "ga": 2,
+        "gd": 4
+      },
+      {
+        "team_id": "46",
+        "name": "Croatia",
+        "fifa_code": "CRO",
+        "mp": 3,
+        "w": 2,
+        "l": 1,
+        "d": 0,
+        "pts": 6,
+        "gf": 5,
+        "ga": 5,
+        "gd": 0
+      },
+      {
+        "team_id": "47",
+        "name": "Ghana",
+        "fifa_code": "GHA",
+        "mp": 3,
+        "w": 1,
+        "l": 1,
+        "d": 1,
+        "pts": 4,
+        "gf": 2,
+        "ga": 2,
+        "gd": 0
+      },
+      {
+        "team_id": "48",
+        "name": "Panama",
+        "fifa_code": "PAN",
+        "mp": 3,
+        "w": 0,
+        "l": 3,
+        "d": 0,
+        "pts": 0,
+        "gf": 0,
+        "ga": 4,
+        "gd": -4
+      }
+    ]
+  }
+]
