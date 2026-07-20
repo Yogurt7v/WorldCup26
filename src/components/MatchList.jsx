@@ -13,6 +13,7 @@ export default function MatchList({
 }) {
   const [selectedTeam, setSelectedTeam] = useState(null)
   const [expandedStage, setExpandedStage] = useState(null)
+  const [allExpanded, setAllExpanded] = useState(false)
   useScrollToUpcomingMatch(matches, loading)
 
   const teams = useMemo(() => {
@@ -27,10 +28,17 @@ export default function MatchList({
   const handleFilterChange = useCallback((value) => {
     setSelectedTeam(value || null)
     setExpandedStage(null)
+    setAllExpanded(false)
   }, [])
 
   const toggleStage = useCallback((stage) => {
+    setAllExpanded(false)
     setExpandedStage((prev) => (prev === stage ? null : stage))
+  }, [])
+
+  const toggleAll = useCallback(() => {
+    setAllExpanded((prev) => !prev)
+    setExpandedStage(null)
   }, [])
 
   const hasFilter = selectedTeam !== null
@@ -58,7 +66,7 @@ export default function MatchList({
   return (
     <div className="match-list">
       <div className="match-list-header">
-        <h2>Матчи</h2>
+        <h2 onClick={toggleAll} style={{ cursor: 'pointer' }}>Все матчи</h2>
         <div className="match-filter-wrapper">
           <select
             value={selectedTeam || ''}
@@ -91,7 +99,7 @@ export default function MatchList({
         STAGE_ORDER.map((stage) => {
           const stageMatches = grouped[stage]
           if (!stageMatches) return null
-          const isExpanded = hasFilter || expandedStage === stage
+          const isExpanded = hasFilter || allExpanded || expandedStage === stage
           return (
             <div key={stage} className={`match-list-section${isExpanded ? ' expanded' : ''}`}>
               <h3 className="match-list-section-header" onClick={() => toggleStage(stage)}>
