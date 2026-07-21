@@ -21,7 +21,7 @@ export default function PredictionsList({ matchId, matchStatus }) {
           predictions.map((p) => (
             <div key={p.id} className="prediction-item">
               <span className="prediction-user">
-                {p.users?.username || 'Неизвестный'}
+                {p.username || 'Неизвестный'}
               </span>
               <span className="prediction-score">
                 {getPredictionTypeIcon(p)} {getPredictionSummary(p)}
